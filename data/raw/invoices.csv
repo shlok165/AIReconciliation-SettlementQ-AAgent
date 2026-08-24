@@ -1,0 +1,64 @@
+invoice_id,expected_amount,status,invoice_date,customer_ref,description
+INV-0001,347.61,PAID,2026-07-05,CUST-2824,Payment for utilize efficient action-items
+INV-0002,2524.43,PAID,2026-07-16,CUST-5506,Payment for enable sticky methodologies
+INV-0003,7391.07,PAID,2026-08-16,CUST-3286,Payment for evolve cutting-edge paradigms
+INV-0004,960.69,PAID,2026-06-27,CUST-9935,Payment for evolve killer e-services
+INV-0005,414.65,PAID,2026-08-13,CUST-7912,Payment for expedite proactive schemas
+INV-0006,2264.52,PAID,2026-07-14,CUST-2535,Payment for unleash next-generation e-services
+INV-0007,6059.99,PAID,2026-08-07,CUST-9279,Payment for benchmark efficient synergies
+INV-0008,7188.59,PAID,2026-07-10,CUST-4257,Payment for scale cutting-edge supply-chains
+INV-0009,4253.25,PAID,2026-07-21,CUST-9928,Payment for orchestrate killer supply-chains
+INV-0010,5933.73,PAID,2026-07-04,CUST-8359,Payment for evolve enterprise platforms
+INV-0011,7612.19,PAID,2026-07-29,CUST-1106,Payment for iterate cross-media metrics
+INV-0012,7011.58,PAID,2026-07-20,CUST-3615,Payment for exploit revolutionary bandwidth
+INV-0013,2850.93,PAID,2026-08-16,CUST-6574,Payment for embrace enterprise infrastructures
+INV-0014,9576.41,PAID,2026-08-17,CUST-4527,Payment for envisioneer bricks-and-clicks networks
+INV-0015,1111.88,PAID,2026-07-13,CUST-6514,Payment for unleash innovative paradigms
+INV-0016,1057.49,PAID,2026-07-17,CUST-7224,Payment for revolutionize distributed infrastructures
+INV-0017,6076.89,PAID,2026-07-17,CUST-6635,Payment for cultivate mission-critical architectures
+INV-0018,7324.34,PAID,2026-07-21,CUST-1711,Payment for target bricks-and-clicks communities
+INV-0019,1335.78,PAID,2026-07-30,CUST-9785,Payment for seize best-of-breed web services
+INV-0020,880.12,PAID,2026-07-20,CUST-7201,Payment for scale intuitive metrics
+INV-0021,8311.11,PAID,2026-07-11,CUST-5803,Payment for incubate interactive communities
+INV-0022,5815.79,PAID,2026-08-08,CUST-6925,Payment for synergize real-time functionalities
+INV-0023,553.66,PAID,2026-08-18,CUST-2139,Payment for enhance world-class markets
+INV-0024,7753.38,PAID,2026-07-17,CUST-4733,Payment for transition robust vortals
+INV-0025,8567.65,PAID,2026-08-02,CUST-2307,Payment for empower innovative e-tailers
+INV-0026,3863.25,PAID,2026-08-19,CUST-2654,Payment for matrix turn-key e-tailers
+INV-0027,6393.28,PAID,2026-08-12,CUST-8428,Payment for strategize ubiquitous eyeballs
+INV-0028,1710.28,PAID,2026-07-20,CUST-6977,Payment for enable interactive schemas
+INV-0029,2174.12,PAID,2026-08-16,CUST-6820,Payment for morph cutting-edge applications
+INV-0030,7048.02,PAID,2026-08-02,CUST-5374,Payment for disintermediate magnetic channels
+INV-0031,3084.74,PAID,2026-08-13,CUST-2169,Services payment for synthesize e-business markets
+INV-0032,1959.33,PAID,2026-07-05,CUST-8573,Services payment for orchestrate granular methodologies
+INV-0033,4126.83,PAID,2026-08-04,CUST-4752,Services payment for expedite innovative architectures
+INV-0034,1133.82,PAID,2026-08-01,CUST-2084,Services payment for expedite plug-and-play deliverables
+INV-0035,2038.60,PAID,2026-07-19,CUST-9179,Services payment for engage value-added methodologies
+INV-0036,1308.47,PAID,2026-07-06,CUST-3287,Services payment for innovate real-time experiences
+INV-0037,1873.78,PAID,2026-07-28,CUST-7543,Services payment for embrace distributed e-commerce
+INV-0038,4319.40,PAID,2026-07-10,CUST-1771,Services payment for target clicks-and-mortar portals
+INV-0039,3022.40,PAID,2026-08-12,CUST-7916,Services payment for engineer virtual mindshare
+INV-0040,2692.66,PAID,2026-07-05,CUST-8668,Services payment for cultivate seamless functionalities
+INV-0041,8905.49,PAID,2026-08-13,CUST-6573,"Invoice for Gonzalez, Brooks and Martin"
+INV-0042,1559.75,PAID,2026-08-15,CUST-8433,Invoice for George Group
+INV-0043,530.83,PAID,2026-06-26,CUST-5315,Invoice for Hickman LLC
+INV-0044,9732.94,PAID,2026-07-18,CUST-9317,Invoice for Allen PLC
+INV-0045,9169.96,PAID,2026-07-02,CUST-5889,Invoice for Dennis Inc
+INV-0046,1294.17,PENDING,2026-08-09,CUST-9317,Monthly subscription renewal
+INV-0047,1294.17,PENDING,2026-08-09,CUST-9317,Monthly subscription renewal
+INV-0048,991.66,PENDING,2026-07-21,CUST-3504,Monthly subscription renewal
+INV-0049,991.66,PENDING,2026-07-21,CUST-3504,Monthly subscription renewal
+INV-0050,686.09,PENDING,2026-07-21,CUST-3646,Monthly subscription renewal
+INV-0051,686.09,PENDING,2026-07-21,CUST-3646,Monthly subscription renewal
+INV-0052,901.19,PENDING,2026-08-07,CUST-9689,Monthly subscription renewal
+INV-0053,901.19,PENDING,2026-08-07,CUST-9689,Monthly subscription renewal
+INV-0054,1394.04,PENDING,2026-08-10,CUST-6310,Monthly subscription renewal
+INV-0055,1394.04,PENDING,2026-08-10,CUST-6310,Monthly subscription renewal
+INV-0056,1516.96,PENDING,2026-07-03,CUST-2832,Unpaid invoice orphan
+INV-0057,2511.83,PAID,2026-07-24,CUST-6038,Services subject to severe date lag
+INV-0058,267.98,FAILED,2026-07-15,CUST-2290,Cancelled order
+INV-0059,1342.61,PARTIAL,2026-07-25,CUST-2133,"Partial payment invoice Campos, Vaughn and Marquez"
+INV-0060,4911.94,PARTIAL,2026-08-03,CUST-3060,"Partial payment invoice Santos, Kim and Holmes"
+INV-0061,1513.57,PARTIAL,2026-07-20,CUST-3705,Partial payment invoice Walker LLC
+INV-0062,2060.23,PARTIAL,2026-07-16,CUST-7932,"Partial payment invoice Spencer, Chapman and Smith"
+INV-0063,4857.45,PARTIAL,2026-08-18,CUST-4295,"Partial payment invoice Brown, Jones and Johnson"

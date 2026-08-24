@@ -1,0 +1,58 @@
+transaction_id,amount,date,description,reference_no
+TXN-0001,347.61,2026-07-05,Payment for utilize efficient action-items,REF-INV-0001
+TXN-0002,2524.43,2026-07-16,Payment for enable sticky methodologies,REF-INV-0002
+TXN-0003,7391.07,2026-08-16,Payment for evolve cutting-edge paradigms,REF-INV-0003
+TXN-0004,960.69,2026-06-27,Payment for evolve killer e-services,REF-INV-0004
+TXN-0005,414.65,2026-08-13,Payment for expedite proactive schemas,REF-INV-0005
+TXN-0006,2264.52,2026-07-14,Payment for unleash next-generation e-services,REF-INV-0006
+TXN-0007,6059.99,2026-08-07,Payment for benchmark efficient synergies,REF-INV-0007
+TXN-0008,7188.59,2026-07-10,Payment for scale cutting-edge supply-chains,REF-INV-0008
+TXN-0009,4253.25,2026-07-21,Payment for orchestrate killer supply-chains,REF-INV-0009
+TXN-0010,5933.73,2026-07-04,Payment for evolve enterprise platforms,REF-INV-0010
+TXN-0011,7612.19,2026-07-29,Payment for iterate cross-media metrics,REF-INV-0011
+TXN-0012,7011.58,2026-07-20,Payment for exploit revolutionary bandwidth,REF-INV-0012
+TXN-0013,2850.93,2026-08-16,Payment for embrace enterprise infrastructures,REF-INV-0013
+TXN-0014,9576.41,2026-08-17,Payment for envisioneer bricks-and-clicks networks,REF-INV-0014
+TXN-0015,1111.88,2026-07-13,Payment for unleash innovative paradigms,REF-INV-0015
+TXN-0016,1057.49,2026-07-17,Payment for revolutionize distributed infrastructures,REF-INV-0016
+TXN-0017,6076.89,2026-07-17,Payment for cultivate mission-critical architectures,REF-INV-0017
+TXN-0018,7324.34,2026-07-21,Payment for target bricks-and-clicks communities,REF-INV-0018
+TXN-0019,1335.78,2026-07-30,Payment for seize best-of-breed web services,REF-INV-0019
+TXN-0020,880.12,2026-07-20,Payment for scale intuitive metrics,REF-INV-0020
+TXN-0021,8311.11,2026-07-11,Payment for incubate interactive communities,REF-INV-0021
+TXN-0022,5815.79,2026-08-08,Payment for synergize real-time functionalities,REF-INV-0022
+TXN-0023,553.66,2026-08-18,Payment for enhance world-class markets,REF-INV-0023
+TXN-0024,7753.38,2026-07-17,Payment for transition robust vortals,REF-INV-0024
+TXN-0025,8567.65,2026-08-02,Payment for empower innovative e-tailers,REF-INV-0025
+TXN-0026,3863.25,2026-08-19,Payment for matrix turn-key e-tailers,REF-INV-0026
+TXN-0027,6393.28,2026-08-12,Payment for strategize ubiquitous eyeballs,REF-INV-0027
+TXN-0028,1710.28,2026-07-20,Payment for enable interactive schemas,REF-INV-0028
+TXN-0029,2174.12,2026-08-16,Payment for morph cutting-edge applications,REF-INV-0029
+TXN-0030,7048.02,2026-08-02,Payment for disintermediate magnetic channels,REF-INV-0030
+TXN-0031,3084.74,2026-08-15,Payment - synthesize e-business markets,TRANSFER-31417
+TXN-0032,1959.33,2026-07-08,Payment - orchestrate granular methodologies,TRANSFER-17331
+TXN-0033,4126.83,2026-08-07,Payment - expedite innovative architectures,TRANSFER-45093
+TXN-0034,1133.82,2026-08-03,Payment - expedite plug-and-play deliverables,TRANSFER-95909
+TXN-0035,2038.60,2026-07-21,Payment - engage value-added methodologies,TRANSFER-44718
+TXN-0036,1308.47,2026-07-09,Payment - innovate real-time experiences,TRANSFER-86484
+TXN-0037,1873.78,2026-07-31,Payment - embrace distributed e-commerce,TRANSFER-21915
+TXN-0038,4319.40,2026-07-12,Payment - target clicks-and-mortar portals,TRANSFER-99192
+TXN-0039,3022.40,2026-08-15,Payment - engineer virtual mindshare,TRANSFER-88104
+TXN-0040,2692.66,2026-07-07,Payment - cultivate seamless functionalities,TRANSFER-99353
+TXN-0041,8682.70,2026-08-13,Settlement payout PAY-0041,SETTLE-PAY-0041
+TXN-0042,1530.59,2026-08-15,Settlement payout PAY-0042,SETTLE-PAY-0042
+TXN-0043,517.86,2026-06-26,Settlement payout PAY-0043,SETTLE-PAY-0043
+TXN-0044,9487.29,2026-07-18,Settlement payout PAY-0044,SETTLE-PAY-0044
+TXN-0045,8918.61,2026-07-02,Settlement payout PAY-0045,SETTLE-PAY-0045
+TXN-0046,1294.17,2026-08-09,Subscription payment,PAYMENT-RECURRING
+TXN-0047,991.66,2026-07-21,Subscription payment,PAYMENT-RECURRING
+TXN-0048,686.09,2026-07-21,Subscription payment,PAYMENT-RECURRING
+TXN-0049,901.19,2026-08-07,Subscription payment,PAYMENT-RECURRING
+TXN-0050,1394.04,2026-08-10,Subscription payment,PAYMENT-RECURRING
+TXN-0051,2794.39,2026-07-07,Unknown bank deposit,UNKNOWN-DEP
+TXN-0052,2511.83,2026-10-22,Services payment,WIRE-41385
+TXN-0053,1219.71,2026-07-25,Underpayment for INV-0059,REF-INV-0059
+TXN-0054,4782.03,2026-08-03,Underpayment for INV-0060,REF-INV-0060
+TXN-0055,1392.28,2026-07-20,Underpayment for INV-0061,REF-INV-0061
+TXN-0056,1879.37,2026-07-16,Underpayment for INV-0062,REF-INV-0062
+TXN-0057,4668.11,2026-08-18,Underpayment for INV-0063,REF-INV-0063
