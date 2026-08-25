@@ -5,7 +5,7 @@ relationship-aware conflict resolution, and safety guards into an end-to-end pip
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Set
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
 import pandas as pd
 
 from app.data.normalizer import (
@@ -24,6 +24,9 @@ from app.engine.fuzzy import (
 )
 
 from app.engine.scoring import ScoredCandidate, ScoringResult, score_fuzzy_candidates
+
+if TYPE_CHECKING:
+    from app.agent.client import PollinationsClient
 
 
 @dataclass(frozen=True)
@@ -94,6 +97,7 @@ def reconcile(
     minimum_score_margin: float = 5.0,
     include_ambiguous_as_unresolved: bool = True,
     require_three_way_consistency: bool = True,
+    llm_tie_breaker_client: Optional["PollinationsClient"] = None,
 ) -> ReconciliationResult:
     """Execute end-to-end multi-source financial reconciliation pipeline."""
     # 1. Normalization (normalize_datasets returns norm_inv, norm_bank, norm_pay)
@@ -219,7 +223,70 @@ def reconcile(
         else:
             accepted_auto_matches.append(scored)
 
-    # 6. ID Extraction for Review Candidates
+    # 6. Optional LLM pass for genuine ties only. The client is supplied explicitly
+    # so a normal batch run never makes an external request or needs an API key.
+    if llm_tie_breaker_client and conflict_review_candidates:
+        from app.agent.tie_breaker import resolve_ambiguous_candidates
+
+        decisions = resolve_ambiguous_candidates(
+            conflict_review_candidates,
+            invoices=invoices,
+            payments=payments,
+            bank_transactions=bank_transactions,
+            client=llm_tie_breaker_client,
+        )
+        chosen_by_source = {
+            (decision.match_type, decision.source_id, decision.chosen_candidate_id)
+            for decision in decisions if decision.accepted and decision.chosen_candidate_id
+        }
+        resolved_sources = {(decision.match_type, decision.source_id) for decision in decisions if decision.accepted}
+        promoted_sources: Set[tuple[str, str]] = set()
+        remaining_reviews: List[ScoredCandidate] = []
+        for review in conflict_review_candidates:
+            candidate = review.candidate
+            source_key = (candidate.match_type, candidate.left_id)
+            selected_key = (candidate.match_type, candidate.left_id, candidate.right_id)
+            if source_key not in resolved_sources:
+                remaining_reviews.append(review)
+                continue
+            if selected_key not in chosen_by_source:
+                continue
+            # The model can only choose from supplied candidates. Keep the engine's
+            # existing one-to-one protections before promoting that choice.
+            if "PAYMENT_BANK" in candidate.match_type and (
+                candidate.left_id in pay_to_bank_matches or candidate.right_id in bank_to_pay_matches
+            ):
+                remaining_reviews.append(review)
+                continue
+            if "INVOICE" in candidate.match_type and (
+                candidate.left_id in pay_to_inv_matches or candidate.right_id in inv_to_pay_matches
+            ):
+                remaining_reviews.append(review)
+                continue
+            accepted_auto_matches.append(
+                ScoredCandidate(
+                    candidate=candidate,
+                    confidence_score=review.confidence_score,
+                    text_score=review.text_score,
+                    amount_score=review.amount_score,
+                    date_score=review.date_score,
+                    decision="AUTO_MATCH",
+                    reasons=review.reasons + ["LLM tie-breaker selected this candidate above the configured confidence threshold."],
+                )
+            )
+            promoted_sources.add(source_key)
+        conflict_review_candidates = remaining_reviews
+        # Do not leave an obsolete conflict exception once the model has safely
+        # resolved that exact source/candidate tie.
+        exceptions = [
+            item for item in exceptions
+            if not (
+                item.exception_type == "CONFLICTING_AUTO_MATCH"
+                and any(source_id == item.record_id for _, source_id in promoted_sources)
+            )
+        ]
+
+    # 7. ID Extraction for Review Candidates
     reviewed_payment_ids: Set[str] = set()
     reviewed_bank_ids: Set[str] = set()
     reviewed_invoice_ids: Set[str] = set()
@@ -246,7 +313,7 @@ def reconcile(
                 )
             )
 
-    # 7. 3-Way Consistency Guard & Final Unresolved ID Calculation
+    # 8. 3-Way Consistency Guard & Final Unresolved ID Calculation
     # If require_three_way_consistency is enabled and invoices are present,
     # payment-bank matches are only confirmed if the payment has a validated invoice match.
     # Otherwise, the settlement is held pending 3-way invoice resolution.
@@ -330,7 +397,7 @@ def reconcile(
     final_unresolved_bank_ids = sorted(list(all_bank_ids - confirmed_bank_ids))
     final_unresolved_invoice_ids = sorted(list(all_invoice_ids - confirmed_invoice_ids))
 
-    # 8. Type-Aware Exception Deduplication for NO_MATCH_FOUND
+    # 9. Type-Aware Exception Deduplication for NO_MATCH_FOUND
     already_reported_exceptions = {
         (e.record_type, e.record_id)
         for e in exceptions
@@ -374,7 +441,7 @@ def reconcile(
                 )
             )
 
-    # 9. Structured Metrics Calculation
+    # 10. Structured Metrics Calculation
     tot_inv = len(all_invoice_ids)
     tot_pay = len(all_payment_ids)
     tot_bank = len(all_bank_ids)

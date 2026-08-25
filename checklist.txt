@@ -1,0 +1,117 @@
+# Final Checklist — AI Reconciliation & Settlement Q&A Agent
+
+> Open this in VS Code, Obsidian, Typora, or GitHub to get clickable, persistent checkboxes.
+
+---
+
+## 1. Data
+**Tech stack:** Python, `pandas` or `faker` (for synthetic generation), CSV/JSON, optionally a Jupyter notebook for quick iteration
+
+- [ ] Schema defined for all 3 sources (bank transactions, invoices, gateway/payment records)
+- [ ] 50+ clean/matchable records generated
+- [ ] Trap cases included: duplicate amounts, fee-deducted settlements, date-tolerance edge cases, near-duplicate descriptions, orphan/unmatchable records, amount mismatches
+- [ ] Ground-truth answer key created (separate file mapping correct matches + true exceptions)
+- [ ] Data exported as CSV/JSON, one file per source
+- [ ] Data generation script/logic included in repo
+
+---
+
+## 2. Matching Engine — Deterministic (Pass 1)
+**Tech stack:** Python, `pandas` (or plain dicts/lists for small scale), `datetime` for date normalization
+
+- [ ] Data loaded into common structure, normalized (dates, amounts, ID formats)
+- [ ] Exact ID match implemented
+- [ ] Exact amount + date match implemented
+- [ ] Matched records tagged with confidence = 100%, removed from unresolved pool
+
+---
+
+## 3. Matching Engine — Fuzzy (Pass 2)
+**Tech stack:** Python, `rapidfuzz` or `thefuzz` (string similarity), `pandas` for date-window filtering
+
+- [ ] Amount + date-tolerance matching implemented
+- [ ] Description similarity matching implemented
+- [ ] Confidence scoring logic for candidate matches
+- [ ] High-confidence candidates auto-resolved; rest passed forward
+
+---
+
+## 4. LLM Tie-Breaker (Pass 3)
+**Tech stack:** Anthropic Claude API or OpenAI API (function/tool calling mode), Python SDK for the provider, `pydantic` (optional, for structured output validation)
+
+- [ ] Only ambiguous records + their specific candidates sent to LLM (not full dataset)
+- [ ] Prompt designed for structured reasoning output (chosen match / no match, confidence, justification)
+- [ ] Confidence threshold enforced — no forced matches below bar
+- [ ] All LLM decisions logged (input, output, confidence)
+
+---
+
+## 5. Exception Handling
+**Tech stack:** Python (plain logic), SQLite or a `pandas` DataFrame / JSON file for storage
+
+- [ ] Every exception tagged with a specific reason category (not generic "unmatched")
+- [ ] Exceptions stored separately from resolved matches
+
+---
+
+## 6. Metrics & Reporting
+**Tech stack:** Python, `pandas` for aggregation, `json`/`csv` for report export, optionally `matplotlib` for charts in the report
+
+- [ ] Match rate calculated
+- [ ] Accuracy calculated against ground truth
+- [ ] Coverage calculated
+- [ ] Exception rate calculated
+- [ ] Throughput (records/sec) measured
+- [ ] Final report generated (totals, breakdown by resolution stage, full exception list)
+
+---
+
+## 7. Settlement Q&A Agent
+**Tech stack:** Anthropic Claude API / OpenAI API with tool/function calling, Python backend functions as "tools," SQLite or DataFrame as the queryable data layer
+
+- [ ] Backend tool functions defined (`get_transaction`, `get_linked_invoice`, `get_gateway_fee`, `get_exception_reason`, etc.)
+- [ ] Tools wired into LLM via function/tool calling (confirmed: not RAG)
+- [ ] End-to-end question flow tested (question → tool call → grounded answer)
+- [ ] Tested against multiple real question types
+
+---
+
+## 8. API Layer
+**Tech stack:** FastAPI, `uvicorn` (server), `pydantic` (request/response models), SQLite or in-memory store
+
+- [ ] `/reconcile` endpoint working
+- [ ] `/exceptions` endpoint working
+- [ ] `/ask` endpoint working
+- [ ] `/metrics` endpoint working
+- [ ] Endpoints tested with actual dataset end-to-end
+
+---
+
+## 9. Frontend Dashboard
+**Tech stack:** Streamlit (fastest to build) OR React/Next.js + Tailwind (more polished); `axios`/`fetch` to call your FastAPI backend; `recharts` or `plotly` if using React, `st.metric`/`st.dataframe` if using Streamlit
+
+- [ ] Metrics summary panel displaying live results
+- [ ] Exception table (sortable/filterable) with reasons visible
+- [ ] Chat interface for Q&A agent working
+- [ ] (Optional) Matched-pairs view showing resolution stage per record
+
+---
+
+## 10. Documentation & Submission
+**Tech stack:** Markdown (README), draw.io / Excalidraw / Mermaid (architecture diagram), Loom or OBS (walkthrough video), GitHub (hosting)
+
+- [ ] README: summary, architecture diagram, metrics from actual run
+- [ ] README: design decisions section (deterministic-first rationale, function-calling vs RAG explanation, no-forced-match policy)
+- [ ] README: dataset design explained (clean vs trap-case breakdown, why each trap category exists)
+- [ ] README: scaling notes paragraph (indexing, batching, LLM only on ambiguous tail)
+- [ ] Run instructions included
+- [ ] (Optional) 2-min walkthrough video recorded
+- [ ] Full repo tested end-to-end from a clean clone (no missed dependencies/setup steps)
+
+---
+
+## Final Sanity Pass Before Submitting
+- [ ] Numbers in README match an actual test run, not estimates
+- [ ] No hardcoded/cherry-picked example — full batch was run
+- [ ] At least one exception in your report is genuinely unresolved (proves you're not forcing 100%)
+- [ ] Repo is clean — no dead code, no stray test files, clear folder structure
