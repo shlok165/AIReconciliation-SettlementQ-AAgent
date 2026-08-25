@@ -1,12 +1,14 @@
 """Data loader module for raw reconciliation and settlement datasets.
 
-This module resolves paths dynamically relative to its location and handles
+This module resolves default file paths dynamically relative to its location and handles
 loading, schema verification, strict type conversions, missing value rejection,
 uniqueness checks, and domain invariant validations with detailed row-level error reporting.
+
+Supports loading datasets from either local file paths or file-like streams (e.g., FastAPI UploadFile streams).
 """
 
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import IO, List, Optional, Tuple, Union
 import pandas as pd
 
 
@@ -16,47 +18,71 @@ class DataValidationError(Exception):
     pass
 
 
+# Type alias for supported input sources (covers strings, Paths, and any binary/text stream)
+FileSource = Union[str, Path, IO[bytes], IO[str]]
+
+
 def _get_raw_data_dir() -> Path:
     """Resolve raw data directory relative to loader.py location."""
     return Path(__file__).resolve().parent.parent.parent / "data" / "raw"
 
 
-def _read_csv_strictly(file_path: Path) -> pd.DataFrame:
-    """Read CSV file with strict error handling for malformed lines and empty files."""
-    if not file_path.is_file():
-        raise DataValidationError(f"File not found: {file_path}")
-
+def _read_csv_strictly(source: FileSource, source_name: str) -> pd.DataFrame:
+    """Read CSV content from a file path or file-like object with strict error handling.
+    
+    Ensures streams are rewindable and resets stream position to 0 after reading.
+    """
     try:
-        df = pd.read_csv(file_path, dtype=str, on_bad_lines="error")
+        if isinstance(source, (str, Path)):
+            file_path = Path(source)
+            if not file_path.is_file():
+                raise DataValidationError(f"File not found: {file_path}")
+            df = pd.read_csv(file_path, dtype=str, on_bad_lines="error")
+        else:
+            # Handle file-like objects / stream inputs
+            if hasattr(source, "seek"):
+                try:
+                    source.seek(0)
+                except Exception:
+                    pass
+
+            df = pd.read_csv(source, dtype=str, on_bad_lines="error")
+
+            if hasattr(source, "seek"):
+                try:
+                    source.seek(0)
+                except Exception:
+                    pass
+    except DataValidationError:
+        raise
     except Exception as exc:
         raise DataValidationError(
-            f"Failed to parse CSV file '{file_path.name}': {exc}"
+            f"Failed to parse CSV dataset '{source_name}': {exc}"
         ) from exc
 
     if df.empty or len(df.columns) == 0:
-        raise DataValidationError(f"Dataset '{file_path.name}' is empty.")
+        raise DataValidationError(f"Dataset '{source_name}' is empty.")
 
     df.columns = [str(col).strip() for col in df.columns]
     return df
 
 
 def _check_required_columns(
-    df: pd.DataFrame, file_name: str, required_columns: List[str]
+    df: pd.DataFrame, source_name: str, required_columns: List[str]
 ) -> None:
     """Validate that all required columns exist in the DataFrame header."""
     missing = [col for col in required_columns if col not in df.columns]
     if missing:
         raise DataValidationError(
-            f"{file_name} missing required column(s): {missing}"
+            f"{source_name} missing required column(s): {missing}"
         )
 
 
 def _validate_duplicate_ids(
-    df: pd.DataFrame, file_name: str, id_col: str
+    df: pd.DataFrame, source_name: str, id_col: str
 ) -> List[str]:
     """Validate that primary IDs are strictly unique within the dataset."""
     errors = []
-    # Identify duplicated ID values excluding NaN/null
     duplicated_mask = df[id_col].duplicated(keep=False) & df[id_col].notna()
     if duplicated_mask.any():
         duplicated_ids = df.loc[duplicated_mask, id_col].unique()
@@ -166,15 +192,12 @@ def _validate_date_column(
     return errors, date_series
 
 
-def load_invoices(
-    data_dir: Optional[Union[str, Path]] = None
-) -> pd.DataFrame:
-    """Load and validate invoices.csv."""
-    raw_dir = Path(data_dir) if data_dir else _get_raw_data_dir()
-    file_path = raw_dir / "invoices.csv"
+# ---------------------------------------------------------------------------
+# Core DataFrame Validation Logic (Shared across paths and stream inputs)
+# ---------------------------------------------------------------------------
 
-    df = _read_csv_strictly(file_path)
-
+def validate_invoices_df(df: pd.DataFrame, source_name: str = "invoices.csv") -> pd.DataFrame:
+    """Apply complete domain schema and data integrity validations to an invoices DataFrame."""
     required_columns = [
         "invoice_id",
         "expected_amount",
@@ -183,21 +206,17 @@ def load_invoices(
         "customer_ref",
         "description",
     ]
-    _check_required_columns(df, "invoices.csv", required_columns)
+    _check_required_columns(df, source_name, required_columns)
     df = df[required_columns].copy()
 
     error_messages = []
 
     # Validate primary ID uniqueness
-    error_messages.extend(
-        _validate_duplicate_ids(df, "invoices.csv", "invoice_id")
-    )
+    error_messages.extend(_validate_duplicate_ids(df, source_name, "invoice_id"))
 
     # Validate mandatory string columns
     for col in ["invoice_id", "status", "customer_ref", "description"]:
-        error_messages.extend(
-            _validate_string_column(df, col, id_col="invoice_id")
-        )
+        error_messages.extend(_validate_string_column(df, col, id_col="invoice_id"))
 
     # Validate mandatory numeric column
     num_errs, expected_amount_series = _validate_numeric_column(
@@ -213,7 +232,7 @@ def load_invoices(
 
     if error_messages:
         raise DataValidationError(
-            f"invoices.csv validation failed with {len(error_messages)} error(s):\n"
+            f"{source_name} validation failed with {len(error_messages)} error(s):\n"
             + "\n".join(f"  - {err}" for err in error_messages)
         )
 
@@ -222,15 +241,10 @@ def load_invoices(
     return df
 
 
-def load_bank_transactions(
-    data_dir: Optional[Union[str, Path]] = None
+def validate_bank_transactions_df(
+    df: pd.DataFrame, source_name: str = "bank_transactions.csv"
 ) -> pd.DataFrame:
-    """Load and validate bank_transactions.csv."""
-    raw_dir = Path(data_dir) if data_dir else _get_raw_data_dir()
-    file_path = raw_dir / "bank_transactions.csv"
-
-    df = _read_csv_strictly(file_path)
-
+    """Apply complete domain schema and data integrity validations to a bank transactions DataFrame."""
     required_columns = [
         "transaction_id",
         "amount",
@@ -238,21 +252,17 @@ def load_bank_transactions(
         "description",
         "reference_no",
     ]
-    _check_required_columns(df, "bank_transactions.csv", required_columns)
+    _check_required_columns(df, source_name, required_columns)
     df = df[required_columns].copy()
 
     error_messages = []
 
     # Validate primary ID uniqueness
-    error_messages.extend(
-        _validate_duplicate_ids(df, "bank_transactions.csv", "transaction_id")
-    )
+    error_messages.extend(_validate_duplicate_ids(df, source_name, "transaction_id"))
 
     # Validate mandatory string columns
     for col in ["transaction_id", "description", "reference_no"]:
-        error_messages.extend(
-            _validate_string_column(df, col, id_col="transaction_id")
-        )
+        error_messages.extend(_validate_string_column(df, col, id_col="transaction_id"))
 
     # Validate mandatory numeric column
     num_errs, amount_series = _validate_numeric_column(
@@ -268,7 +278,7 @@ def load_bank_transactions(
 
     if error_messages:
         raise DataValidationError(
-            f"bank_transactions.csv validation failed with {len(error_messages)} error(s):\n"
+            f"{source_name} validation failed with {len(error_messages)} error(s):\n"
             + "\n".join(f"  - {err}" for err in error_messages)
         )
 
@@ -277,15 +287,8 @@ def load_bank_transactions(
     return df
 
 
-def load_payments(
-    data_dir: Optional[Union[str, Path]] = None
-) -> pd.DataFrame:
-    """Load and validate payments.csv."""
-    raw_dir = Path(data_dir) if data_dir else _get_raw_data_dir()
-    file_path = raw_dir / "payments.csv"
-
-    df = _read_csv_strictly(file_path)
-
+def validate_payments_df(df: pd.DataFrame, source_name: str = "payments.csv") -> pd.DataFrame:
+    """Apply complete domain schema and data integrity validations to a payments DataFrame."""
     required_columns = [
         "payment_id",
         "gross_amount",
@@ -294,21 +297,17 @@ def load_payments(
         "settlement_date",
         "linked_invoice_id",
     ]
-    _check_required_columns(df, "payments.csv", required_columns)
+    _check_required_columns(df, source_name, required_columns)
     df = df[required_columns].copy()
 
     error_messages = []
 
     # Validate primary ID uniqueness
-    error_messages.extend(
-        _validate_duplicate_ids(df, "payments.csv", "payment_id")
-    )
+    error_messages.extend(_validate_duplicate_ids(df, source_name, "payment_id"))
 
-    # Validate mandatory string column (linked_invoice_id allowed to be empty/NaN)
+    # Validate string columns (linked_invoice_id allowed to be empty/NaN)
     error_messages.extend(
-        _validate_string_column(
-            df, "payment_id", id_col="payment_id", allow_empty=False
-        )
+        _validate_string_column(df, "payment_id", id_col="payment_id", allow_empty=False)
     )
     error_messages.extend(
         _validate_string_column(
@@ -319,9 +318,7 @@ def load_payments(
     # Validate mandatory numeric columns
     numeric_results = {}
     for col in ["gross_amount", "fee", "net_settled_amount"]:
-        num_errs, series = _validate_numeric_column(
-            df, col, id_col="payment_id"
-        )
+        num_errs, series = _validate_numeric_column(df, col, id_col="payment_id")
         error_messages.extend(num_errs)
         numeric_results[col] = series
 
@@ -336,7 +333,6 @@ def load_payments(
     fee = numeric_results["fee"]
     net = numeric_results["net_settled_amount"]
 
-    # Evaluate invariant only on rows where all three numeric fields parsed successfully
     valid_numeric_rows_mask = gross.notna() & fee.notna() & net.notna()
     for idx in df.index[valid_numeric_rows_mask].tolist():
         g_val = gross.loc[idx]
@@ -355,7 +351,7 @@ def load_payments(
 
     if error_messages:
         raise DataValidationError(
-            f"payments.csv validation failed with {len(error_messages)} error(s):\n"
+            f"{source_name} validation failed with {len(error_messages)} error(s):\n"
             + "\n".join(f"  - {err}" for err in error_messages)
         )
 
@@ -366,10 +362,86 @@ def load_payments(
     return df
 
 
+# ---------------------------------------------------------------------------
+# Stream / File-Object Specific Loaders (Upload behavior)
+# ---------------------------------------------------------------------------
+
+def _resolve_source_name(file: FileSource, default_name: str) -> str:
+    """Extract a human-readable dataset name from a file path or object stream."""
+    if isinstance(file, (str, Path)):
+        return Path(file).name
+    name = getattr(file, "filename", getattr(file, "name", None))
+    return str(name) if name else default_name
+
+
+def load_invoices_from_file(
+    file: FileSource, source_name: Optional[str] = None
+) -> pd.DataFrame:
+    """Load and validate invoices from a file path or file-like object stream."""
+    resolved_name = source_name or _resolve_source_name(file, "invoices.csv")
+    df = _read_csv_strictly(file, resolved_name)
+    return validate_invoices_df(df, source_name=resolved_name)
+
+
+def load_bank_transactions_from_file(
+    file: FileSource, source_name: Optional[str] = None
+) -> pd.DataFrame:
+    """Load and validate bank transactions from a file path or file-like object stream."""
+    resolved_name = source_name or _resolve_source_name(file, "bank_transactions.csv")
+    df = _read_csv_strictly(file, resolved_name)
+    return validate_bank_transactions_df(df, source_name=resolved_name)
+
+
+def load_payments_from_file(
+    file: FileSource, source_name: Optional[str] = None
+) -> pd.DataFrame:
+    """Load and validate payments from a file path or file-like object stream."""
+    resolved_name = source_name or _resolve_source_name(file, "payments.csv")
+    df = _read_csv_strictly(file, resolved_name)
+    return validate_payments_df(df, source_name=resolved_name)
+
+
+def load_all_data_from_files(
+    invoices_file: FileSource,
+    bank_transactions_file: FileSource,
+    payments_file: FileSource,
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Load and validate all three datasets from file streams or paths simultaneously."""
+    invoices = load_invoices_from_file(invoices_file)
+    bank_txns = load_bank_transactions_from_file(bank_transactions_file)
+    payments = load_payments_from_file(payments_file)
+    return invoices, bank_txns, payments
+
+
+# ---------------------------------------------------------------------------
+# Default / Directory Loaders (Backwards-Compatible Local Path behavior)
+# ---------------------------------------------------------------------------
+
+def load_invoices(data_dir: Optional[Union[str, Path]] = None) -> pd.DataFrame:
+    """Load and validate invoices.csv from local filesystem directory."""
+    raw_dir = Path(data_dir) if data_dir else _get_raw_data_dir()
+    file_path = raw_dir / "invoices.csv"
+    return load_invoices_from_file(file_path, source_name="invoices.csv")
+
+
+def load_bank_transactions(data_dir: Optional[Union[str, Path]] = None) -> pd.DataFrame:
+    """Load and validate bank_transactions.csv from local filesystem directory."""
+    raw_dir = Path(data_dir) if data_dir else _get_raw_data_dir()
+    file_path = raw_dir / "bank_transactions.csv"
+    return load_bank_transactions_from_file(file_path, source_name="bank_transactions.csv")
+
+
+def load_payments(data_dir: Optional[Union[str, Path]] = None) -> pd.DataFrame:
+    """Load and validate payments.csv from local filesystem directory."""
+    raw_dir = Path(data_dir) if data_dir else _get_raw_data_dir()
+    file_path = raw_dir / "payments.csv"
+    return load_payments_from_file(file_path, source_name="payments.csv")
+
+
 def load_all_data(
     data_dir: Optional[Union[str, Path]] = None
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Load and return all raw datasets cleanly."""
+    """Load and return all raw datasets from local filesystem directory."""
     invoices = load_invoices(data_dir=data_dir)
     bank_transactions = load_bank_transactions(data_dir=data_dir)
     payments = load_payments(data_dir=data_dir)
