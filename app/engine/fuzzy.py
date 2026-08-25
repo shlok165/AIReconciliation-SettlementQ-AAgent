@@ -205,6 +205,141 @@ def generate_payment_bank_candidates(
     return candidates
 
 
+def generate_invoice_payment_candidates(
+    invoices: pd.DataFrame,
+    payments: pd.DataFrame,
+    bank_transactions: Optional[pd.DataFrame] = None,
+    deterministic_result: Optional[Any] = None,
+    unresolved_invoice_ids: Optional[Collection[str]] = None,
+    unresolved_payment_ids: Optional[Collection[str]] = None,
+    max_amount_difference_minor: int = 100,
+    max_date_difference_days: int = 7,
+    min_text_similarity: float = 0.0,
+) -> List[FuzzyCandidate]:
+    """Generate and rank candidate pairs between unresolved invoices and payments."""
+    _validate_rapidfuzz_installed()
+
+    required_inv_cols = [
+        "invoice_id_normalized",
+        "expected_amount_normalized",
+        "invoice_date_normalized",
+    ]
+    required_pay_cols = [
+        "payment_id_normalized",
+        "gross_amount_normalized",
+        "settlement_date_normalized",
+    ]
+
+    _validate_columns(invoices, required_inv_cols, "Invoices")
+    _validate_columns(payments, required_pay_cols, "Payments")
+
+    inv_df = invoices.copy()
+    if unresolved_invoice_ids is not None:
+        inv_df = inv_df[inv_df["invoice_id_normalized"].isin(unresolved_invoice_ids)]
+
+    pay_df = payments.copy()
+    if unresolved_payment_ids is not None:
+        pay_df = pay_df[pay_df["payment_id_normalized"].isin(unresolved_payment_ids)]
+
+    if inv_df.empty or pay_df.empty:
+        return []
+
+    # Map payment IDs to bank transactions if deterministic matches are present
+    pay_to_bank: Dict[str, str] = {}
+    if deterministic_result and hasattr(deterministic_result, "payment_bank_matches"):
+        for m in deterministic_result.payment_bank_matches:
+            pay_to_bank[m.left_id] = m.right_id
+
+    bank_lookup: Dict[str, pd.Series] = {}
+    if bank_transactions is not None and "transaction_id_normalized" in bank_transactions.columns:
+        bank_lookup = {
+            str(r["transaction_id_normalized"]): r for _, r in bank_transactions.iterrows()
+        }
+
+    candidates: List[FuzzyCandidate] = []
+
+    for _, inv in inv_df.iterrows():
+        inv_id = str(inv["invoice_id_normalized"])
+        inv_amt = inv["expected_amount_normalized"]
+        inv_date = pd.to_datetime(inv["invoice_date_normalized"])
+        inv_desc = str(inv.get("description_normalized", "")).lower()
+        inv_id_clean = inv_id.lower().replace("-", "")
+
+        for _, pay in pay_df.iterrows():
+            p_id = str(pay["payment_id_normalized"])
+            p_amt = pay["gross_amount_normalized"]
+            if pd.isna(p_amt):
+                p_amt = pay.get("net_settled_amount_normalized")
+            p_date = pd.to_datetime(pay["settlement_date_normalized"])
+
+            if pd.isna(inv_amt) or pd.isna(p_amt):
+                continue
+
+            # 1. Amount proximity
+            amt_diff = abs(int(inv_amt) - int(p_amt))
+            if amt_diff > max_amount_difference_minor:
+                continue
+
+            # 2. Date window
+            if pd.isna(inv_date) or pd.isna(p_date):
+                continue
+            date_diff = abs((inv_date - p_date).days)
+            if date_diff > max_date_difference_days:
+                continue
+
+            # 3. Multi-source Text Similarity (comparing invoice against bank memo or payment references)
+            bank_id = pay_to_bank.get(p_id)
+            b_ref, b_desc = "", ""
+            if bank_id and bank_id in bank_lookup:
+                b_ref = str(bank_lookup[bank_id].get("reference_no_normalized", "")).lower()
+                b_desc = str(bank_lookup[bank_id].get("description_normalized", "")).lower()
+
+            sim_desc_vs_desc = float(fuzz.token_set_ratio(inv_desc, b_desc)) if b_desc and inv_desc else 0.0
+            sim_desc_vs_ref = float(fuzz.token_set_ratio(inv_desc, b_ref)) if b_ref and inv_desc else 0.0
+            sim_id_vs_ref = float(fuzz.token_set_ratio(inv_id.lower(), b_ref)) if b_ref else 0.0
+            sim_id_vs_desc = float(fuzz.token_set_ratio(inv_id.lower(), b_desc)) if b_desc else 0.0
+
+            # Substring exact check (e.g. "INV-0026" or "0026" in bank reference)
+            if (b_ref and (inv_id.lower() in b_ref or inv_id_clean in b_ref.replace("-", ""))) or \
+               (b_desc and (inv_id.lower() in b_desc or inv_id_clean in b_desc.replace("-", ""))):
+                sim_id_vs_ref = max(sim_id_vs_ref, 100.0)
+
+            best_sim = max(sim_desc_vs_desc, sim_desc_vs_ref, sim_id_vs_ref, sim_id_vs_desc)
+
+            if best_sim < min_text_similarity:
+                continue
+
+            evidence = {
+                "invoice_description_vs_bank_description": sim_desc_vs_desc,
+                "invoice_description_vs_bank_reference": sim_desc_vs_ref,
+                "invoice_id_vs_bank_reference": sim_id_vs_ref,
+                "best_similarity": best_sim,
+                "associated_bank_id": bank_id,
+            }
+
+            candidates.append(
+                FuzzyCandidate(
+                    left_id=p_id,
+                    right_id=inv_id,
+                    match_type="INVOICE_PAYMENT_FUZZY_CANDIDATE",
+                    text_similarity=best_sim,
+                    amount_difference_minor=amt_diff,
+                    date_difference_days=date_diff,
+                    evidence=evidence,
+                )
+            )
+
+    candidates.sort(
+        key=lambda c: (
+            -c.text_similarity,
+            c.amount_difference_minor,
+            c.date_difference_days,
+        )
+    )
+
+    return candidates
+
+
 # --- Pipeline Orchestrator ---
 
 def run_fuzzy_matching(
@@ -225,8 +360,6 @@ def run_fuzzy_matching(
         unresolved_bank_txns: Set[str] = set(deterministic_result.unmatched_bank_transaction_ids)
         unresolved_invoices: Set[str] = set(deterministic_result.unmatched_invoice_ids)
 
-        # Explicitly inspect ambiguous match relationship types
-        # Explicitly inspect ambiguous match relationship types
         if include_ambiguous_as_unresolved and hasattr(deterministic_result, "ambiguous_matches"):
             for amb in deterministic_result.ambiguous_matches:
                 match_type = getattr(amb, "match_type", "")
@@ -267,9 +400,22 @@ def run_fuzzy_matching(
         min_text_similarity=min_text_similarity,
     )
 
+    # 3. Generate candidates for Invoice <-> Payment
+    ip_candidates = generate_invoice_payment_candidates(
+        invoices=invoices,
+        payments=payments,
+        bank_transactions=bank_transactions,
+        deterministic_result=deterministic_result,
+        unresolved_invoice_ids=unresolved_invoices,
+        unresolved_payment_ids=None,
+        max_amount_difference_minor=max_amount_difference_minor,
+        max_date_difference_days=max_date_difference_days,
+        min_text_similarity=min_text_similarity,
+    )
+
     return FuzzyMatchResult(
         payment_bank_candidates=pb_candidates,
-        invoice_payment_candidates=[],
+        invoice_payment_candidates=ip_candidates,
         unresolved_payment_ids=sorted(list(unresolved_payments)),
         unresolved_bank_transaction_ids=sorted(list(unresolved_bank_txns)),
         unresolved_invoice_ids=sorted(list(unresolved_invoices)),

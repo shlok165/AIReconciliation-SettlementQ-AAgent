@@ -58,8 +58,10 @@ def _validate_columns(df: pd.DataFrame, required_cols: List[str], dataset_name: 
 def match_payments_to_invoices(
     invoices: pd.DataFrame,
     payments: pd.DataFrame,
+    amount_tolerance_minor: int = 0,
+    max_date_difference_days: int = 7,
 ) -> Tuple[List[DeterministicMatch], List[str], List[str]]:
-    """Perform deterministic matching between payments and invoices using explicit links."""
+    """Perform deterministic matching between payments and invoices using explicit links with invariant validation."""
     _validate_columns(invoices, ["invoice_id_normalized"], "Invoices")
     _validate_columns(
         payments, ["payment_id_normalized", "linked_invoice_id_normalized"], "Payments"
@@ -71,31 +73,80 @@ def match_payments_to_invoices(
 
     all_invoice_ids = set(invoices["invoice_id_normalized"].dropna().astype(str))
     all_payment_ids = set(payments["payment_id_normalized"].dropna().astype(str))
-    valid_invoice_set = set(invoices["invoice_id_normalized"].dropna().astype(str))
 
+    invoice_lookup = {
+        str(row["invoice_id_normalized"]): row for _, row in invoices.iterrows()
+    }
+
+    # Group payments by linked invoice
+    payments_by_inv: Dict[str, List[pd.Series]] = {}
     for _, pay_row in payments.iterrows():
-        pay_id = str(pay_row["payment_id_normalized"])
-        linked_inv_id = pay_row["linked_invoice_id_normalized"]
+        linked_inv_id = pay_row.get("linked_invoice_id_normalized")
+        if pd.notna(linked_inv_id) and str(linked_inv_id).strip():
+            payments_by_inv.setdefault(str(linked_inv_id).strip(), []).append(pay_row)
 
-        if pd.isna(linked_inv_id) or str(linked_inv_id).strip() == "":
+    for linked_inv_str, pay_rows in payments_by_inv.items():
+        if linked_inv_str not in invoice_lookup:
             continue
 
-        linked_inv_id_str = str(linked_inv_id).strip()
+        inv_row = invoice_lookup[linked_inv_str]
+        inv_amount = inv_row.get("expected_amount_normalized")
+        if pd.isna(inv_amount):
+            inv_amount = inv_row.get("gross_amount_normalized")
+        inv_date = inv_row.get("invoice_date_normalized")
 
-        if linked_inv_id_str in valid_invoice_set:
+        # Check total payments amount vs invoice amount
+        total_pay_amount = 0
+        has_amount_info = pd.notna(inv_amount)
+        for p in pay_rows:
+            p_amount = p.get("gross_amount_normalized")
+            if pd.isna(p_amount):
+                p_amount = p.get("net_settled_amount_normalized")
+            if pd.notna(p_amount):
+                total_pay_amount += int(p_amount)
+            else:
+                has_amount_info = False
+
+        if has_amount_info:
+            diff_minor = abs(int(total_pay_amount) - int(inv_amount))
+            if diff_minor > amount_tolerance_minor:
+                continue
+
+        # Check date window for each payment
+        dates_valid = True
+        for p in pay_rows:
+            pay_date = p.get("settlement_date_normalized")
+            if pd.notna(pay_date) and pd.notna(inv_date):
+                date_res = check_date_window(
+                    earlier_date=inv_date,
+                    later_date=pay_date,
+                    max_difference_days=max_date_difference_days,
+                    allow_future_dates=True,
+                    rule_name="DETERMINISTIC_INVOICE_PAYMENT_DATE",
+                )
+                if not date_res.passed:
+                    dates_valid = False
+                    break
+
+        if not dates_valid:
+            continue
+
+        # All invariants passed for this invoice and its linked payment(s)
+        for p in pay_rows:
+            pay_id = str(p["payment_id_normalized"])
             matches.append(
                 DeterministicMatch(
                     match_type="PAYMENT_INVOICE_EXPLICIT_LINK",
                     left_id=pay_id,
-                    right_id=linked_inv_id_str,
+                    right_id=linked_inv_str,
                     evidence={
-                        "linked_invoice_id": linked_inv_id_str,
-                        "rule": "Exact string equality on payment.linked_invoice_id_normalized",
+                        "linked_invoice_id": linked_inv_str,
+                        "rule": "Exact string equality on payment.linked_invoice_id_normalized with invariant checks",
                     },
                 )
             )
             matched_payment_ids.add(pay_id)
-            matched_invoice_ids.add(linked_inv_id_str)
+        matched_invoice_ids.add(linked_inv_str)
 
     unmatched_payment_ids = sorted(list(all_payment_ids - matched_payment_ids))
     unmatched_invoice_ids = sorted(list(all_invoice_ids - matched_invoice_ids))
@@ -331,7 +382,10 @@ def run_deterministic_matching(
     """Orchestrate the full deterministic matching stage across all datasets."""
     # 1. Invoice <-> Payment Explicit Links
     inv_pay_matches, unmatched_inv_ids, _ = match_payments_to_invoices(
-        invoices, payments
+        invoices=invoices,
+        payments=payments,
+        amount_tolerance_minor=amount_tolerance_minor,
+        max_date_difference_days=max_date_difference_days,
     )
 
     # 2. Payment <-> Bank Exact Amount/Date Matches

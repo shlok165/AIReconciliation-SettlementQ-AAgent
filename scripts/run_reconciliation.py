@@ -72,13 +72,16 @@ def main():
     actual_matches = set()
     
     for m in getattr(result, "confirmed_invoice_payment_matches", []):
-        actual_matches.add(("INVOICE_PAYMENT", str(m.left_id), str(m.right_id)))
+        actual_matches.add(("INVOICE_PAYMENT", str(m.right_id), str(m.left_id)))
     for m in getattr(result, "confirmed_payment_bank_matches", []):
         actual_matches.add(("PAYMENT_BANK", str(m.left_id), str(m.right_id)))
         
     for am in getattr(result, "auto_matches", []):
         c = am.candidate
-        actual_matches.add((str(c.match_type), str(c.left_id), str(c.right_id)))
+        if "PAYMENT_BANK" in c.match_type:
+            actual_matches.add(("PAYMENT_BANK", str(c.left_id), str(c.right_id)))
+        else:
+            actual_matches.add(("INVOICE_PAYMENT", str(c.right_id), str(c.left_id)))
 
     # Parse ground truth expected relationships based on actual schema:
     # ['case_id', 'invoice_id', 'transaction_id', 'payment_id', 'expected_result', 'exception_reason']
@@ -119,6 +122,9 @@ def main():
         else:
             incorrectly_flagged += 1
 
+    fp_set = sorted(list(actual_matches - expected_matches))
+    fn_set = sorted(list(expected_matches - actual_matches))
+
     print("=== GROUND TRUTH EVALUATION ===\n")
     print(f"Expected match relationships: {len(expected_matches)}")
     print(f"Actual resolved matches: {len(actual_matches)}")
@@ -127,8 +133,20 @@ def main():
     print(f"False negatives: {false_negatives}")
     print(f"Precision: {precision:.2f}%")
     print(f"Recall: {recall:.2f}%\n")
-    print(f"Correctly flagged exceptions: {correctly_flagged}a")
-    print(f"Incorrectly flagged exceptions: {incorrectly_flagged}")
+    print(f"Correctly flagged exceptions: {correctly_flagged}")
+    print(f"Incorrectly flagged exceptions: {incorrectly_flagged}\n")
+
+    if fp_set:
+        print("=== FALSE POSITIVE MATCHES ===")
+        for rel_type, left, right in fp_set:
+            print(f"- [{rel_type}] {left} <-> {right}")
+        print()
+
+    if fn_set:
+        print("=== FALSE NEGATIVE MATCHES ===")
+        for rel_type, left, right in fn_set:
+            print(f"- [{rel_type}] {left} <-> {right}")
+        print()
 
 
 if __name__ == "__main__":

@@ -1,69 +1,29 @@
-# Finance Reconciliation Dataset
+# Extreme Financial Reconciliation Dataset
 
-This dataset contains synthetic financial records for evaluating a multi-source finance reconciliation agent.
+This dataset contains synthetic financial records for rigorously evaluating a multi-source finance reconciliation engine and AI tie-breaker agent across real-world enterprise ledger challenges.
 
 ## Raw Data
 
 The `raw/` directory contains the input data available to the agent:
 
-- **`invoices.csv`** — Expected customer payments and invoice details.
-- **`bank_transactions.csv`** — Transactions recorded by the bank.
-- **`payments.csv`** — Payment processor and settlement records.
+- **`invoices.csv`** — Expected customer payments, invoice dates, customer references, and line-item descriptions.
+- **`bank_transactions.csv`** — Bank settlement transactions, cleared dates, amounts, reference numbers, and unparsed deposit memos.
+- **`payments.csv`** — Payment gateway records, gross amounts, processing fees, net settled amounts, and settlement dates.
 
-The raw data does **not** contain reconciliation outcomes or labels. The agent must determine whether records should be successfully reconciled or flagged as exceptions.
-
----
-
-## Dataset Size
-
-The dataset contains **60 underlying reconciliation cases**.
-
-Because some cases intentionally contain:
-
-- multiple invoice candidates,
-- missing bank transactions,
-- missing payment records,
-- or records existing in only one source,
-
-the number of records in each CSV is different.
-
-The generated dataset contains:
-
-| Dataset | Records |
-|---|---:|
-| Invoices | 63 |
-| Bank transactions | 57 |
-| Payments | 57 |
-| Ground truth cases | 60 |
-
-The difference is intentional:
-
-- **63 invoices** because the 5 ambiguous cases each contain **2 invoice candidates**, adding 5 extra invoices.
-- **57 bank transactions** because only 2 of the 5 genuine exception cases generate a bank transaction.
-- **57 payments** because only 2 of the 5 genuine exception cases generate a payment.
-- **60 ground truth records** because every underlying reconciliation scenario has exactly one ground truth case.
+The raw data does **not** contain reconciliation outcomes or labels. The engine must determine whether records should be successfully reconciled, held for fuzzy scoring, or flagged as exceptions.
 
 ---
 
-## Record Count Breakdown
+## Dataset Breakdown & Complexity Categories
 
-| Category | Cases | Invoices | Bank Transactions | Payments |
-|---|---:|---:|---:|---:|
-| Clean exact matches | 30 | 30 | 30 | 30 |
-| Fuzzy/date tolerance matches | 10 | 10 | 10 | 10 |
-| Gateway fee cases | 5 | 5 | 5 | 5 |
-| Ambiguous matches | 5 | 10 | 5 | 5 |
-| Genuine exception cases | 5 | 3 | 2 | 2 |
-| Amount mismatch cases | 5 | 5 | 5 | 5 |
-| **Total** | **60** | **63** | **57** | **57** |
-
----
-
-## Why are there 63 invoices?
-
-Most reconciliation cases generate one invoice.
-
-However, every ambiguous case generates **two equally plausible invoice candidates**:
-
-```text
-5 ambiguous cases × 2 invoices = 10 invoices
+| Category | Description | Primary Reconciliation Mechanism | Cases | Invoices | Payments | Bank Txns |
+| :--- | :--- | :--- | :---:| :---:| :---:| :---:|
+| **Clean Exact Matches** | Fully populated `linked_invoice_id`, same-day clearance, exact amounts. | Deterministic Matching (Rule-based) | 25 | 25 | 25 | 25 |
+| **Unstructured Reference Memos** | `linked_invoice_id` is omitted; references embedded in free-text memos. | Fuzzy / Lexical Entity Extraction | 20 | 20 | 20 | 20 |
+| **OCR Noise & Name Typos** | Typos, character confusions (`0` vs `O`, `1` vs `I`), abbreviation variations. | Multi-Signal RapidFuzz Scoring | 15 | 15 | 15 | 15 |
+| **Gateway Fees & Net Settlement** | Interchange deductions (2.9% + $0.30) where bank amount equals net. | Fee Invariant Reconciliation | 10 | 10 | 10 | 10 |
+| **Banking Delays & Cutoffs** | 2–6 day settlement delays across weekends and holiday cutoff windows. | Date Window Tolerances | 10 | 10 | 10 | 10 |
+| **Partial Payment Installments** | Single invoice settled across multiple separate payment installments. | Cumulative Amount Aggregation | 5 | 5 | 10 | 10 |
+| **AI Tie-Breaker Ambiguity** | Competing invoices with identical amounts/dates to the same vendor. | LLM / Semantic Context Tie-Breaker | 5 | 10 | 5 | 5 |
+| **Complex Genuine Exceptions** | Orphans, severe date lags (>90 days), severe underpayments/shortfalls. | Exception & Anomaly Detection | 10 | 6 | 6 | 6 |
+| **Total** | **Extreme Benchmark Suite** | | **100** | **101** | **101** | **101** |

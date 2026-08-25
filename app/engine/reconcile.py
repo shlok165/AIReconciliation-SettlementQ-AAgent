@@ -93,6 +93,7 @@ def reconcile(
     review_threshold: float = 70.0,
     minimum_score_margin: float = 5.0,
     include_ambiguous_as_unresolved: bool = True,
+    require_three_way_consistency: bool = True,
 ) -> ReconciliationResult:
     """Execute end-to-end multi-source financial reconciliation pipeline."""
     # 1. Normalization (normalize_datasets returns norm_inv, norm_bank, norm_pay)
@@ -139,20 +140,20 @@ def reconcile(
     # 5. Relationship-Aware Conflict Resolution with Unified ID Orientations
     # Convention: 
     #   - PAYMENT_BANK: left_id = payment_id, right_id = transaction_id
-    #   - INVOICE_PAYMENT: left_id = invoice_id, right_id = payment_id
+    #   - INVOICE_PAYMENT: left_id = payment_id, right_id = invoice_id
     pay_to_bank_matches: Dict[str, List[ScoredCandidate]] = {}
     bank_to_pay_matches: Dict[str, List[ScoredCandidate]] = {}
-    invoice_to_pay_matches: Dict[str, List[ScoredCandidate]] = {}
     pay_to_inv_matches: Dict[str, List[ScoredCandidate]] = {}
+    inv_to_pay_matches: Dict[str, List[ScoredCandidate]] = {}
 
     for scored in scoring_result.auto_matches:
         cand = scored.candidate
         if "PAYMENT_BANK" in cand.match_type:
             pay_to_bank_matches.setdefault(cand.left_id, []).append(scored)
             bank_to_pay_matches.setdefault(cand.right_id, []).append(scored)
-        elif "INVOICE_PAYMENT" in cand.match_type:
-            invoice_to_pay_matches.setdefault(cand.left_id, []).append(scored)
-            pay_to_inv_matches.setdefault(cand.right_id, []).append(scored)
+        elif "INVOICE" in cand.match_type:
+            pay_to_inv_matches.setdefault(cand.left_id, []).append(scored)
+            inv_to_pay_matches.setdefault(cand.right_id, []).append(scored)
 
     accepted_auto_matches: List[ScoredCandidate] = []
     conflict_review_candidates: List[ScoredCandidate] = list(scoring_result.review_candidates)
@@ -183,10 +184,13 @@ def reconcile(
                 has_conflict = True
                 reason = f"Bank transaction {cand.right_id} is assigned to multiple auto-matched payments."
 
-        elif "INVOICE_PAYMENT" in cand.match_type:
-            if len(pay_to_inv_matches.get(cand.right_id, [])) > 1:
+        elif "INVOICE" in cand.match_type:
+            if len(pay_to_inv_matches.get(cand.left_id, [])) > 1:
                 has_conflict = True
-                reason = f"Payment {cand.right_id} is assigned to multiple auto-matched invoices."
+                reason = f"Payment {cand.left_id} is assigned to multiple auto-matched invoices."
+            elif len(inv_to_pay_matches.get(cand.right_id, [])) > 1:
+                has_conflict = True
+                reason = f"Invoice {cand.right_id} is assigned to multiple auto-matched payments."
 
         if has_conflict:
             conflict_item = ScoredCandidate(
@@ -200,7 +204,7 @@ def reconcile(
             )
             conflict_review_candidates.append(conflict_item)
 
-            rec_id = cand.left_id if "PAYMENT_BANK" in cand.match_type else cand.right_id
+            rec_id = cand.left_id
             rec_type = "PAYMENT"
 
             exceptions.append(
@@ -209,7 +213,7 @@ def reconcile(
                     record_id=rec_id,
                     record_type=rec_type,
                     description=reason,
-                    related_ids=[cand.right_id if "PAYMENT_BANK" in cand.match_type else cand.left_id],
+                    related_ids=[cand.right_id],
                 )
             )
         else:
@@ -222,14 +226,14 @@ def reconcile(
 
     for rev in conflict_review_candidates:
         c = rev.candidate
+        rec_id = c.left_id
+        rec_type = "PAYMENT"
+        rel_id = c.right_id
+        reviewed_payment_ids.add(c.left_id)
         if "PAYMENT_BANK" in c.match_type:
-            reviewed_payment_ids.add(c.left_id)
             reviewed_bank_ids.add(c.right_id)
-            rec_id, rec_type, rel_id = c.left_id, "PAYMENT", c.right_id
         else:
-            reviewed_invoice_ids.add(c.left_id)
-            reviewed_payment_ids.add(c.right_id)
-            rec_id, rec_type, rel_id = c.right_id, "PAYMENT", c.left_id
+            reviewed_invoice_ids.add(c.right_id)
 
         if not any(e.record_id == rec_id and e.record_type == rec_type for e in exceptions):
             exceptions.append(
@@ -242,29 +246,81 @@ def reconcile(
                 )
             )
 
-    # 7. Final Unresolved ID Calculation with Consistent Mapping
+    # 7. 3-Way Consistency Guard & Final Unresolved ID Calculation
+    # If require_three_way_consistency is enabled and invoices are present,
+    # payment-bank matches are only confirmed if the payment has a validated invoice match.
+    # Otherwise, the settlement is held pending 3-way invoice resolution.
+    confirmed_invoice_payment_ids: Set[str] = set()
+    for m in det_result.invoice_payment_matches:
+        confirmed_invoice_payment_ids.add(m.left_id)
+    for auto in accepted_auto_matches:
+        c = auto.candidate
+        if "INVOICE" in c.match_type:
+            confirmed_invoice_payment_ids.add(c.left_id)
+
+    tot_inv_count = len(norm_inv["invoice_id_normalized"].dropna()) if "invoice_id_normalized" in norm_inv.columns else 0
+
+    confirmed_pb_matches: List[ConfirmedMatch] = []
+    held_pb_matches: List[Tuple[ConfirmedMatch, str]] = []
+
+    for m in det_result.payment_bank_matches:
+        if not require_three_way_consistency or tot_inv_count == 0 or m.left_id in confirmed_invoice_payment_ids:
+            confirmed_pb_matches.append(m)
+        else:
+            held_pb_matches.append((
+                m,
+                f"Payment {m.left_id} matched bank transaction {m.right_id} but lacks a confirmed invoice match (held pending 3-way invoice resolution)."
+            ))
+
+    for m, reason in held_pb_matches:
+        exceptions.append(
+            ExceptionRecord(
+                exception_type="UNRESOLVED_INVOICE_DEPENDENCY",
+                record_id=m.left_id,
+                record_type="PAYMENT",
+                description=reason,
+                related_ids=[m.right_id],
+            )
+        )
+
+    final_accepted_auto_matches: List[ScoredCandidate] = []
+    for auto in accepted_auto_matches:
+        c = auto.candidate
+        if "PAYMENT_BANK" in c.match_type:
+            if not require_three_way_consistency or tot_inv_count == 0 or c.left_id in confirmed_invoice_payment_ids:
+                final_accepted_auto_matches.append(auto)
+            else:
+                exceptions.append(
+                    ExceptionRecord(
+                        exception_type="UNRESOLVED_INVOICE_DEPENDENCY",
+                        record_id=c.left_id,
+                        record_type="PAYMENT",
+                        description=f"Auto-matched payment {c.left_id} to bank transaction {c.right_id} held pending 3-way invoice resolution.",
+                        related_ids=[c.right_id],
+                    )
+                )
+        else:
+            final_accepted_auto_matches.append(auto)
+
     confirmed_payment_ids: Set[str] = set()
     confirmed_bank_ids: Set[str] = set()
     confirmed_invoice_ids: Set[str] = set()
 
-    # Deterministic matches unpacking:
-    # Note: det_result.invoice_payment_matches uses left_id = invoice_id, right_id = payment_id
-    for m in det_result.payment_bank_matches:
+    for m in confirmed_pb_matches:
         confirmed_payment_ids.add(m.left_id)
         confirmed_bank_ids.add(m.right_id)
     for m in det_result.invoice_payment_matches:
-        confirmed_invoice_ids.add(m.left_id)
-        confirmed_payment_ids.add(m.right_id)
+        confirmed_payment_ids.add(m.left_id)
+        confirmed_invoice_ids.add(m.right_id)
 
-    # Auto matches unpacking
-    for auto in accepted_auto_matches:
+    for auto in final_accepted_auto_matches:
         c = auto.candidate
         if "PAYMENT_BANK" in c.match_type:
             confirmed_payment_ids.add(c.left_id)
             confirmed_bank_ids.add(c.right_id)
-        elif "INVOICE_PAYMENT" in c.match_type:
-            confirmed_invoice_ids.add(c.left_id)
-            confirmed_payment_ids.add(c.right_id)
+        elif "INVOICE" in c.match_type:
+            confirmed_payment_ids.add(c.left_id)
+            confirmed_invoice_ids.add(c.right_id)
 
     all_invoice_ids = set(norm_inv["invoice_id_normalized"].dropna().astype(str).unique()) if "invoice_id_normalized" in norm_inv.columns else set()
     all_payment_ids = set(norm_pay["payment_id_normalized"].dropna().astype(str).unique()) if "payment_id_normalized" in norm_pay.columns else set()
@@ -280,6 +336,11 @@ def reconcile(
         for e in exceptions
     }
 
+    held_bank_ids: Set[str] = set()
+    for e in exceptions:
+        if e.exception_type == "UNRESOLVED_INVOICE_DEPENDENCY":
+            held_bank_ids.update(e.related_ids)
+
     for p_id in final_unresolved_payment_ids:
         if p_id not in reviewed_payment_ids and ("PAYMENT", p_id) not in already_reported_exceptions:
             exceptions.append(
@@ -292,7 +353,7 @@ def reconcile(
             )
 
     for b_id in final_unresolved_bank_ids:
-        if b_id not in reviewed_bank_ids and ("BANK_TRANSACTION", b_id) not in already_reported_exceptions:
+        if b_id not in reviewed_bank_ids and b_id not in held_bank_ids and ("BANK_TRANSACTION", b_id) not in already_reported_exceptions:
             exceptions.append(
                 ExceptionRecord(
                     exception_type="NO_MATCH_FOUND",
@@ -318,8 +379,8 @@ def reconcile(
     tot_pay = len(all_payment_ids)
     tot_bank = len(all_bank_ids)
 
-    det_matches_count = len(det_result.payment_bank_matches) + len(det_result.invoice_payment_matches)
-    auto_matches_count = len(accepted_auto_matches)
+    det_matches_count = len(confirmed_pb_matches) + len(det_result.invoice_payment_matches)
+    auto_matches_count = len(final_accepted_auto_matches)
 
     matched_payments_count = len(confirmed_payment_ids)
     matched_bank_count = len(confirmed_bank_ids)
@@ -349,9 +410,9 @@ def reconcile(
         deterministic_result=det_result,
         fuzzy_result=fuzzy_result,
         scoring_result=scoring_result,
-        confirmed_payment_bank_matches=det_result.payment_bank_matches,
+        confirmed_payment_bank_matches=confirmed_pb_matches,
         confirmed_invoice_payment_matches=det_result.invoice_payment_matches,
-        auto_matches=accepted_auto_matches,
+        auto_matches=final_accepted_auto_matches,
         review_candidates=conflict_review_candidates,
         rejected_candidates=scoring_result.rejected_candidates,
         unresolved_payment_ids=final_unresolved_payment_ids,
