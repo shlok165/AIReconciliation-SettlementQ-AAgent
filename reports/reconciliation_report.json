@@ -1,0 +1,38 @@
+{
+  "totals": {
+    "total_invoices": 101,
+    "total_payments": 101,
+    "total_bank_transactions": 101,
+    "deterministic_confirmed_matches": 143,
+    "fuzzy_auto_matches": 33,
+    "manual_review_candidates": 8,
+    "rejected_fuzzy_candidates": 4,
+    "unresolved_payments": 13,
+    "unresolved_bank_transactions": 13,
+    "unresolved_invoices": 18,
+    "payment_match_rate": 87.13,
+    "bank_transaction_match_rate": 87.13,
+    "invoice_match_rate": 82.18
+  },
+  "evaluation": {
+    "precision": 100.0,
+    "recall": 92.63,
+    "accuracy": 100.0,
+    "coverage": 92.63,
+    "exception_rate": 14.52,
+    "throughput_records_per_second": 853.68,
+    "true_positives": 176,
+    "false_positives": 0,
+    "false_negatives": 14,
+    "expected_match_relationships": 190,
+    "resolved_match_relationships": 176
+  },
+  "resolution_stage_breakdown": {
+    "deterministic_confirmed_matches": 143,
+    "fuzzy_auto_matches": 33,
+    "manual_review_candidates": 8,
+    "rejected_fuzzy_candidates": 4
+  },
+  "exception_count": 33,
+  "exception_report": "reports\\exceptions.csv"
+}

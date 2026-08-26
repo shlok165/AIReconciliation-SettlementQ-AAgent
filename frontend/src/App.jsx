@@ -1,122 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect, useMemo, useState } from 'react'
+import { BarChart3, Bot, CircleAlert, FileText, LoaderCircle, MessageSquare, RefreshCw, ShieldCheck, Sparkles } from 'lucide-react'
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { askQuestion, generateReport, getExceptions, getMetrics, runReconciliation } from './services/api'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const pct = (value) => `${Number(value || 0).toFixed(2)}%`
+function Card({ label, value, note, tone = 'blue' }) { return <article className={`metric-card ${tone}`}><span>{label}</span><strong>{value}</strong><small>{note}</small></article> }
+function Table({ rows }) { if (!rows.length) return <p className="empty">No exceptions in this view.</p>; return <div className="table-wrap"><table><thead><tr><th>Record</th><th>Type</th><th>Reason</th><th>Details</th></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.record_id}-${index}`}><td><code>{row.record_id}</code></td><td>{row.record_type.replace('_', ' ')}</td><td><span className="reason">{row.exception_type.replaceAll('_', ' ')}</span></td><td>{row.description}</td></tr>)}</tbody></table></div> }
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+export default function App() {
+  const [view, setView] = useState('overview'), [metrics, setMetrics] = useState(null), [exceptions, setExceptions] = useState([]), [loading, setLoading] = useState(true), [working, setWorking] = useState(false), [error, setError] = useState(''), [question, setQuestion] = useState(''), [messages, setMessages] = useState([{ role: 'assistant', text: 'Ask about a payment, invoice, bank transaction, gateway fee, exception, or reconciliation metric.' }])
+  const refresh = async () => { setLoading(true); setError(''); try { const [m, e] = await Promise.all([getMetrics(), getExceptions()]); setMetrics(m); setExceptions(e) } catch (err) { setError(err.response?.data?.detail || 'Could not connect to FastAPI. Start it on port 8000 and try again.') } finally { setLoading(false) } }
+  useEffect(() => { refresh() }, [])
+  const stages = useMemo(() => metrics ? [{ stage: 'Deterministic', count: metrics.reconciliation.deterministic_confirmed_matches }, { stage: 'Fuzzy', count: metrics.reconciliation.fuzzy_auto_matches }, { stage: 'Review', count: metrics.reconciliation.manual_review_candidates }, { stage: 'Rejected', count: metrics.reconciliation.rejected_fuzzy_candidates }] : [], [metrics])
+  const perform = async (operation) => { setWorking(true); setError(''); try { await operation(); await refresh() } catch (err) { setError(err.response?.data?.detail || 'The backend operation failed.') } finally { setWorking(false) } }
+  const submit = async (event) => { event.preventDefault(); const text = question.trim(); if (!text || working) return; setMessages((items) => [...items, { role: 'user', text }]); setQuestion(''); setWorking(true); try { const response = await askQuestion(text); setMessages((items) => [...items, { role: 'assistant', text: response.answer, trace: response.tool_trace }]) } catch (err) { setMessages((items) => [...items, { role: 'assistant', text: err.response?.data?.detail || 'The assistant could not complete that request.', failed: true }]) } finally { setWorking(false) } }
+  return <main className="shell"><aside className="sidebar"><div className="brand"><i><Sparkles size={18} /></i><div><b>Settlement AI</b><small>Reconciliation workspace</small></div></div><nav><button className={view === 'overview' ? 'active' : ''} onClick={() => setView('overview')}><BarChart3 size={18} />Overview</button><button className={view === 'exceptions' ? 'active' : ''} onClick={() => setView('exceptions')}><CircleAlert size={18} />Exceptions <em>{exceptions.length}</em></button><button className={view === 'assistant' ? 'active' : ''} onClick={() => setView('assistant')}><MessageSquare size={18} />Ask assistant</button></nav><div className="side-note"><ShieldCheck size={18} /><span>Grounded answers<br />from your ledger data</span></div></aside><section className="content"><header><div><p className="eyebrow">AI RECONCILIATION ENGINE</p><h1>{view === 'overview' ? 'Settlement overview' : view === 'exceptions' ? 'Exception review' : 'Settlement Q&A'}</h1><p className="subtitle">Current local dataset · deterministic-first workflow</p></div><button className="refresh" onClick={refresh}><RefreshCw size={18} className={loading ? 'spin' : ''} /></button></header>{error && <div className="error"><CircleAlert size={18} />{error}</div>}{loading ? <div className="loading"><LoaderCircle className="spin" size={26} /> Loading current reconciliation results…</div> : <>{view === 'overview' && metrics && <><div className="metrics"><Card label="Match precision" value={pct(metrics.evaluation.precision)} note="against ground truth" tone="green" /><Card label="Coverage" value={pct(metrics.evaluation.coverage)} note={`${metrics.evaluation.resolved_match_relationships} relationships resolved`} /><Card label="Exception rate" value={pct(metrics.evaluation.exception_rate)} note={`${exceptions.length} records need attention`} tone="orange" /><Card label="Throughput" value={metrics.evaluation.throughput_records_per_second.toLocaleString()} note="records / second" tone="purple" /></div><div className="two-col"><article className="panel"><div className="panel-head"><div><h2>Resolution stages</h2><p>How the current batch was handled</p></div><Bot size={19} /></div><div className="chart"><ResponsiveContainer width="100%" height="100%"><BarChart data={stages}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="stage" tickLine={false} axisLine={false} /><YAxis allowDecimals={false} tickLine={false} axisLine={false} /><Tooltip cursor={{ fill: '#f1f5f9' }} /><Bar dataKey="count" fill="#2563eb" radius={[5, 5, 0, 0]} /></BarChart></ResponsiveContainer></div></article><article className="panel run"><p className="ready">● Dataset ready</p><h2>{metrics.reconciliation.total_invoices} invoices · {metrics.reconciliation.total_payments} payments</h2><p>{metrics.reconciliation.deterministic_confirmed_matches} deterministic and {metrics.reconciliation.fuzzy_auto_matches} fuzzy matches were resolved without LLM involvement.</p><div><button className="primary" disabled={working} onClick={() => perform(runReconciliation)}>Run reconciliation</button><button className="secondary" disabled={working} onClick={() => perform(generateReport)}><FileText size={16} />Generate report</button></div></article></div><article className="panel table-panel"><div className="panel-head"><div><h2>Needs attention</h2><p>Latest unresolved records</p></div><button className="link" onClick={() => setView('exceptions')}>View all</button></div><Table rows={exceptions.slice(0, 5)} /></article></>}{view === 'exceptions' && <article className="panel table-panel"><div className="panel-head"><div><h2>{exceptions.length} exception records</h2><p>Records stay unresolved rather than being forced into a match.</p></div></div><Table rows={exceptions} /></article>}{view === 'assistant' && <article className="chat-panel"><div className="chat-title"><i><Bot size={19} /></i><div><h2>Ask your settlement data</h2><p>The model calls backend tools; it does not use RAG.</p></div></div><div className="chat-log">{messages.map((message, index) => <div key={index} className={`message ${message.role} ${message.failed ? 'failed' : ''}`}><p>{message.text}</p>{message.trace?.length > 0 && <small>Tools used: {message.trace.map((item) => item.tool).join(', ')}</small>}</div>)}</div><form onSubmit={submit}><input value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="e.g. What gateway fee was deducted from PAY-0035?" /><button className="primary" disabled={working}>{working ? 'Thinking…' : 'Ask'}</button></form></article>}</>}</section></main>
 }
-
-export default App
