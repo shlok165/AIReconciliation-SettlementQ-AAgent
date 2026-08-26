@@ -275,6 +275,104 @@ At scale, you'd add indexing, database-backed storage, and parallel LLM batches.
 
 ---
 
+## Pipeline Flowchart
+
+```mermaid
+flowchart TD
+    A["CSV data: invoices, payments,<br/>bank transactions"] --> B["Validate schema +<br/>normalize (IDs, amounts, dates)"]
+
+    subgraph P1["Phase 1 — Deterministic matching"]
+        B --> C{"Invoice ↔ Payment<br/>explicit link + amount/date"}
+        C -->|"pass"| D1["Confirmed:<br/>PAYMENT_INVOICE_EXPLICIT_LINK"]
+        C -->|"fail / not found"| E1["Unmatched"]
+        D1 --> F{"Payment ↔ Bank<br/>exact amount + date"}
+        E1 --> F
+        F -->|"exactly 1 match"| D2["Confirmed:<br/>PAYMENT_BANK_EXACT_AMOUNT_DATE"]
+        F -->|"2+ matches"| AMB["Ambiguous match<br/>(exception)"]
+        F -->|"0 matches"| G{"Bank ref ==<br/>payment ID?"}
+        G -->|"yes"| D3["Confirmed:<br/>BANK_REFERENCE_EXACT_PAYMENT_ID"]
+        G -->|"no"| UNM["Unmatched pool"]
+    end
+
+    AMB --> H
+    UNM --> H
+
+    subgraph P2_3["Phases 2–3 — Fuzzy matching + scoring"]
+        H["Generate fuzzy candidates<br/>(RapidFuzz, blocked by amount/date)"] --> I["Score: text 50% + amount 30% + date 20%"]
+        I -->|"conf ≥ 90"| J1["AUTO_MATCH"]
+        I -->|"70 ≤ conf < 90"| J2["REVIEW"]
+        I -->|"conf < 70"| J3["REJECT (dropped)"]
+        J1 --> K{"Margin vs 2nd best<br/>< 5.0 pts?"}
+        K -->|"yes"| J2
+        K -->|"no"| L1["Stays AUTO_MATCH"]
+    end
+
+    subgraph P4["Phase 4 — Conflict resolution"]
+        L1 --> M{"1:1 constraint<br/>violated?"}
+        M -->|"no"| N1["Accepted auto-match"]
+        M -->|"yes"| N2["Downgraded to REVIEW +<br/>CONFLICTING_AUTO_MATCH exception"]
+    end
+
+    J2 --> O
+    N2 --> O
+
+    subgraph P5["Phase 5 — LLM tie-breaker (optional)"]
+        O{"2+ competing<br/>candidates?"} -->|"yes"| P["LLM selects best<br/>or returns null"]
+        O -->|"no, single candidate"| Q1["Stays in manual review"]
+        P --> R{"chosen ID valid AND<br/>conf ≥ 90 AND 1:1 OK?"}
+        R -->|"yes"| N1
+        R -->|"no"| Q2["MANUAL_REVIEW_REQUIRED"]
+    end
+
+    D2 --> S
+    D3 --> S
+    N1 --> S
+
+    subgraph P6["Phase 6 — 3-way consistency guard"]
+        S{"Payment↔Bank match also<br/>has confirmed Invoice match?"}
+        S -->|"yes"| T1["3-way confirmed match"]
+        S -->|"no"| T2["Held + UNRESOLVED_<br/>INVOICE_DEPENDENCY exception"]
+    end
+
+    T1 --> U
+    T2 --> U
+    J3 --> U
+    Q1 --> U
+    Q2 --> U
+
+    U["Phase 7 — Collect confirmed IDs,<br/>compute unresolved, dedupe exceptions"] --> V{"LLM evaluation<br/>configured? (Phase 8)"}
+
+    subgraph P8["Phase 8 — LLM evaluation (optional)"]
+        V -->|"yes"| W["Batch unresolved cases (3 at a time)<br/>LLM: MATCH or EXCEPTION"]
+        W --> X["Validate vs ground truth:<br/>correctly/incorrectly resolved"]
+    end
+
+    V -->|"no"| Y
+    X --> Y
+
+    Y["Final output: matches, review queue,<br/>rejected, exceptions, metrics"]
+
+    style A fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+    style B fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+    style U fill:#F1EFE8,stroke:#5F5E5A,color:#2C2C2A
+    style Y fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style D1 fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style D2 fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style D3 fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style L1 fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style N1 fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style T1 fill:#E1F5EE,stroke:#0F6E56,color:#04342C
+    style AMB fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    style N2 fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    style T2 fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    style Q1 fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    style Q2 fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    style J3 fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+    style UNM fill:#FAECE7,stroke:#993C1D,color:#4A1B0C
+```
+
+---
+
 ## License
 
 MIT
