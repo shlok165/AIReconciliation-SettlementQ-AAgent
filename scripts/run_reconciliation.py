@@ -1,6 +1,7 @@
 """Evaluation runner script to execute reconciliation against raw CSVs and compare with ground truth."""
 
 import sys
+import argparse
 from pathlib import Path
 
 # Ensure project root is in python path
@@ -13,6 +14,17 @@ from app.evaluation.metrics import calculate_evaluation_metrics
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Run reconciliation and evaluation.")
+    parser.add_argument(
+        "--llm-eval", action="store_true",
+        help="Enable LLM evaluation of unmatched transactions (requires POLLINATIONS_API_KEY).",
+    )
+    parser.add_argument(
+        "--llm-min-confidence", type=float, default=70.0,
+        help="Minimum LLM confidence to accept a MATCH resolution (default: 70).",
+    )
+    args = parser.parse_args()
+
     # 1. Load raw datasets using the actual loader API (Order: invoices, bank_transactions, payments)
     try:
         invoices, bank_transactions, payments = load_all_data()
@@ -20,14 +32,38 @@ def main():
         print(f"Error loading datasets via app.data.loader: {exc}")
         sys.exit(1)
 
-    # 2. Run reconciliation engine
+    # 2. Optionally create LLM clients
+    llm_tie_client = None
+    llm_eval_client = None
+    ground_truth_path = project_root / "data" / "ground_truth" / "ground_truth.csv"
+
+    if args.llm_eval:
+        try:
+            from dotenv import load_dotenv
+            load_dotenv(project_root / ".env")
+        except ImportError:
+            pass
+
+        try:
+            from app.agent.client import PollinationsClient
+            llm_eval_client = PollinationsClient()
+            llm_tie_client = PollinationsClient()
+            print("LLM evaluation enabled. Pollinations client created.\n")
+        except Exception as exc:
+            print(f"Warning: Could not create LLM client: {exc}")
+            print("Proceeding without LLM evaluation.\n")
+
+    # 3. Run reconciliation engine
     result = reconcile(
         invoices=invoices,
         payments=payments,
-        bank_transactions=bank_transactions
+        bank_transactions=bank_transactions,
+        llm_tie_breaker_client=llm_tie_client,
+        llm_evaluation_client=llm_eval_client,
+        ground_truth_path=str(ground_truth_path) if ground_truth_path.exists() else None,
     )
 
-    # 3. Print Reconciliation Results formatted to specification
+    # 4. Print Reconciliation Results formatted to specification
     print("=== RECONCILIATION RESULTS ===\n")
     print(f"Total invoices: {result.metrics.total_invoices}")
     print(f"Total payments: {result.metrics.total_payments}")
@@ -59,8 +95,32 @@ def main():
         print("No exceptions recorded.")
     print()
 
-    # 4. Compare with Ground Truth Evaluation
-    ground_truth_path = project_root / "data" / "ground_truth" / "ground_truth.csv"
+    # 5. LLM Evaluation Results (if available)
+    if result.llm_evaluation_result is not None:
+        llm_res = result.llm_evaluation_result
+        print("=== LLM EVALUATION OF UNMATCHED TRANSACTIONS ===\n")
+        print(f"Total cases evaluated by LLM: {llm_res.total_cases_evaluated}")
+        print(f"LLM correctly resolved (matched): {llm_res.llm_resolved_count}")
+        print(f"LLM correctly identified as exception: {llm_res.llm_correct_exception_count}")
+        print(f"LLM incorrectly resolved: {llm_res.llm_incorrect_count}")
+        print(f"LLM resolution accuracy: {llm_res.llm_resolution_accuracy:.2f}%\n")
+
+        if llm_res.details:
+            print("-- Per-case LLM decisions --")
+            for d in llm_res.details:
+                verdict_marker = "+" if "CORRECT" in d.get("verdict", "") else "X"
+                print(
+                    f"  [{verdict_marker}] {d['case_id']} | "
+                    f"Record: {d['record_id']} ({d['record_type']}) | "
+                    f"LLM: {d['llm_resolution']} | "
+                    f"Expected: {d['expected_result']} | "
+                    f"Verdict: {d['verdict']} | "
+                    f"Confidence: {d['llm_confidence']:.0f}"
+                )
+                print(f"      Justification: {d['llm_justification']}")
+            print()
+
+    # 6. Compare with Ground Truth Evaluation
     if not ground_truth_path.exists():
         print("=== GROUND TRUTH EVALUATION ===")
         print(f"Ground truth file not found at {ground_truth_path}. Skipping evaluation breakdown.")
@@ -70,6 +130,7 @@ def main():
         result,
         ground_truth_path=ground_truth_path,
         elapsed_seconds=0.0,
+        llm_resolution_result=result.llm_evaluation_result,
     )
 
     print("=== GROUND TRUTH EVALUATION ===\n")
@@ -86,6 +147,14 @@ def main():
     for key, value in evaluation.transaction_resolution_stage_breakdown.items():
         print(f"- {key}: {value}")
     print()
+
+    if evaluation.llm_cases_evaluated > 0:
+        print("-- LLM Resolution Metrics --")
+        print(f"LLM cases evaluated: {evaluation.llm_cases_evaluated}")
+        print(f"LLM correctly resolved (matched): {evaluation.llm_resolved_transactions}")
+        print(f"LLM correctly identified as exception: {evaluation.llm_correct_exception_determinations}")
+        print(f"LLM incorrectly resolved: {evaluation.llm_incorrect_resolutions}")
+        print(f"LLM resolution accuracy: {evaluation.llm_resolution_accuracy:.2f}%\n")
 
     print("-- Relationship-level (Secondary) --")
     print(f"Expected match relationships: {evaluation.expected_match_relationships}")

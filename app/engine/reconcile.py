@@ -81,6 +81,9 @@ class ReconciliationResult:
     exceptions: List[ExceptionRecord]
     metrics: ReconciliationMetrics
 
+    # Optional LLM evaluation result for unmatched transactions.
+    llm_evaluation_result: Optional[Any] = None
+
 
 def reconcile(
     invoices: pd.DataFrame,
@@ -98,6 +101,8 @@ def reconcile(
     include_ambiguous_as_unresolved: bool = True,
     require_three_way_consistency: bool = True,
     llm_tie_breaker_client: Optional["PollinationsClient"] = None,
+    llm_evaluation_client: Optional["PollinationsClient"] = None,
+    ground_truth_path: Optional[str] = None,
 ) -> ReconciliationResult:
     """Execute end-to-end multi-source financial reconciliation pipeline."""
     # 1. Normalization (normalize_datasets returns norm_inv, norm_bank, norm_pay)
@@ -473,6 +478,35 @@ def reconcile(
         invoice_match_rate=float(round(invoice_match_rate, 2)),
     )
 
+    llm_eval_result = None
+    if llm_evaluation_client:
+        from app.agent.llm_resolver import run_llm_evaluation
+        from pathlib import Path
+
+        gt_path = Path(ground_truth_path) if ground_truth_path else None
+        llm_eval_result = run_llm_evaluation(
+            ReconciliationResult(
+                deterministic_result=det_result,
+                fuzzy_result=fuzzy_result,
+                scoring_result=scoring_result,
+                confirmed_payment_bank_matches=confirmed_pb_matches,
+                confirmed_invoice_payment_matches=det_result.invoice_payment_matches,
+                auto_matches=final_accepted_auto_matches,
+                review_candidates=conflict_review_candidates,
+                rejected_candidates=scoring_result.rejected_candidates,
+                unresolved_payment_ids=final_unresolved_payment_ids,
+                unresolved_bank_transaction_ids=final_unresolved_bank_ids,
+                unresolved_invoice_ids=final_unresolved_invoice_ids,
+                exceptions=exceptions,
+                metrics=metrics,
+            ),
+            invoices=invoices,
+            payments=payments,
+            bank_transactions=bank_transactions,
+            client=llm_evaluation_client,
+            ground_truth_path=gt_path,
+        )
+
     return ReconciliationResult(
         deterministic_result=det_result,
         fuzzy_result=fuzzy_result,
@@ -487,4 +521,5 @@ def reconcile(
         unresolved_invoice_ids=final_unresolved_invoice_ids,
         exceptions=exceptions,
         metrics=metrics,
+        llm_evaluation_result=llm_eval_result,
     )

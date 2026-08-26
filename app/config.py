@@ -9,7 +9,7 @@ class PollinationsSettings:
     api_key: str
     model: str = "openai-fast"
     base_url: str = "https://gen.pollinations.ai/v1"
-    timeout_seconds: int = 30
+    timeout_seconds: int = 300
 
     @classmethod
     def from_environment(cls) -> "PollinationsSettings":

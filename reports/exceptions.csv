@@ -1,23 +1,10 @@
 exception_type,record_id,record_type,description,related_ids
-AMBIGUOUS_DETERMINISTIC_MATCH,PAY-0099,PAYMENT,Deterministic matching found multiple exact matches for source PAY-0099: Payment matched 2 bank transactions with identical amount and date constraints.,"['TXN-0099', 'TXN-0100']"
-AMBIGUOUS_DETERMINISTIC_MATCH,PAY-0100,PAYMENT,Deterministic matching found multiple exact matches for source PAY-0100: Payment matched 2 bank transactions with identical amount and date constraints.,"['TXN-0099', 'TXN-0100']"
-AMBIGUOUS_DETERMINISTIC_MATCH,TXN-0099,BANK_TRANSACTION,Deterministic matching found multiple exact matches for source TXN-0099: Bank transaction matched 2 payments with identical amount and date constraints.,"['PAY-0099', 'PAY-0100']"
-AMBIGUOUS_DETERMINISTIC_MATCH,TXN-0100,BANK_TRANSACTION,Deterministic matching found multiple exact matches for source TXN-0100: Bank transaction matched 2 payments with identical amount and date constraints.,"['PAY-0099', 'PAY-0100']"
-MANUAL_REVIEW_REQUIRED,PAY-0113,PAYMENT,Fuzzy candidate requires manual review (confidence: 72.4). Reasons: Text similarity score: 44.9; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0110']
-MANUAL_REVIEW_REQUIRED,PAY-0074,PAYMENT,Fuzzy candidate requires manual review (confidence: 89.7). Reasons: Text similarity score: 79.4; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0074']
-MANUAL_REVIEW_REQUIRED,PAY-0048,PAYMENT,Fuzzy candidate requires manual review (confidence: 88.6). Reasons: Text similarity score: 77.1; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0048']
-MANUAL_REVIEW_REQUIRED,PAY-0065,PAYMENT,Fuzzy candidate requires manual review (confidence: 88.5). Reasons: Text similarity score: 76.9; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0065']
-MANUAL_REVIEW_REQUIRED,PAY-0063,PAYMENT,Fuzzy candidate requires manual review (confidence: 87.6). Reasons: Text similarity score: 75.3; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0063']
-MANUAL_REVIEW_REQUIRED,PAY-0070,PAYMENT,Fuzzy candidate requires manual review (confidence: 87.5). Reasons: Text similarity score: 75.0; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0070']
-MANUAL_REVIEW_REQUIRED,PAY-0047,PAYMENT,Fuzzy candidate requires manual review (confidence: 75.0). Reasons: Text similarity score: 50.0; Exact amount match (0 minor units diff); Exact date match (0 days diff),['INV-0047']
-UNRESOLVED_INVOICE_DEPENDENCY,PAY-0047,PAYMENT,Payment PAY-0047 matched bank transaction TXN-0047 but lacks a confirmed invoice match (held pending 3-way invoice resolution).,['TXN-0047']
-UNRESOLVED_INVOICE_DEPENDENCY,PAY-0048,PAYMENT,Payment PAY-0048 matched bank transaction TXN-0048 but lacks a confirmed invoice match (held pending 3-way invoice resolution).,['TXN-0048']
-UNRESOLVED_INVOICE_DEPENDENCY,PAY-0063,PAYMENT,Payment PAY-0063 matched bank transaction TXN-0063 but lacks a confirmed invoice match (held pending 3-way invoice resolution).,['TXN-0063']
-UNRESOLVED_INVOICE_DEPENDENCY,PAY-0065,PAYMENT,Payment PAY-0065 matched bank transaction TXN-0065 but lacks a confirmed invoice match (held pending 3-way invoice resolution).,['TXN-0065']
-UNRESOLVED_INVOICE_DEPENDENCY,PAY-0070,PAYMENT,Payment PAY-0070 matched bank transaction TXN-0070 but lacks a confirmed invoice match (held pending 3-way invoice resolution).,['TXN-0070']
-UNRESOLVED_INVOICE_DEPENDENCY,PAY-0074,PAYMENT,Payment PAY-0074 matched bank transaction TXN-0074 but lacks a confirmed invoice match (held pending 3-way invoice resolution).,['TXN-0074']
-NO_MATCH_FOUND,PAY-0114,PAYMENT,Payment PAY-0114 could not be matched by deterministic or fuzzy engine.,[]
-NO_MATCH_FOUND,TXN-0114,BANK_TRANSACTION,Bank transaction TXN-0114 could not be matched by deterministic or fuzzy engine.,[]
-NO_MATCH_FOUND,INV-0106,INVOICE,Invoice INV-0106 could not be matched by deterministic or fuzzy engine.,[]
-NO_MATCH_FOUND,INV-0108,INVOICE,Invoice INV-0108 could not be matched by deterministic or fuzzy engine.,[]
-NO_MATCH_FOUND,INV-0111,INVOICE,Invoice INV-0111 could not be matched by deterministic or fuzzy engine.,[]
+AMBIGUOUS_DETERMINISTIC_MATCH,PAY-0047,PAYMENT,Deterministic matching found multiple exact matches for source PAY-0047: Payment matched 2 bank transactions with identical amount and date constraints.,"['TXN-0047', 'TXN-0048']"
+AMBIGUOUS_DETERMINISTIC_MATCH,PAY-0048,PAYMENT,Deterministic matching found multiple exact matches for source PAY-0048: Payment matched 2 bank transactions with identical amount and date constraints.,"['TXN-0047', 'TXN-0048']"
+AMBIGUOUS_DETERMINISTIC_MATCH,TXN-0047,BANK_TRANSACTION,Deterministic matching found multiple exact matches for source TXN-0047: Bank transaction matched 2 payments with identical amount and date constraints.,"['PAY-0047', 'PAY-0048']"
+AMBIGUOUS_DETERMINISTIC_MATCH,TXN-0048,BANK_TRANSACTION,Deterministic matching found multiple exact matches for source TXN-0048: Bank transaction matched 2 payments with identical amount and date constraints.,"['PAY-0047', 'PAY-0048']"
+NO_MATCH_FOUND,PAY-0053,PAYMENT,Payment PAY-0053 could not be matched by deterministic or fuzzy engine.,[]
+NO_MATCH_FOUND,TXN-0053,BANK_TRANSACTION,Bank transaction TXN-0053 could not be matched by deterministic or fuzzy engine.,[]
+NO_MATCH_FOUND,INV-0050,INVOICE,Invoice INV-0050 could not be matched by deterministic or fuzzy engine.,[]
+NO_MATCH_FOUND,INV-0052,INVOICE,Invoice INV-0052 could not be matched by deterministic or fuzzy engine.,[]
+NO_MATCH_FOUND,INV-0053,INVOICE,Invoice INV-0053 could not be matched by deterministic or fuzzy engine.,[]

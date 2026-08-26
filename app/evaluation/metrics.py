@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import pandas as pd
 
@@ -38,6 +38,14 @@ class EvaluationMetrics:
     expected_match_relationships: int
     resolved_match_relationships: int
     identification_matrix: Dict[str, Dict[str, float | int]]
+
+    # LLM evaluation metrics (optional, populated when LLM pass is enabled).
+    llm_cases_evaluated: int = 0
+    llm_resolved_transactions: int = 0
+    llm_incorrect_resolutions: int = 0
+    llm_correct_exception_determinations: int = 0
+    llm_resolution_accuracy: float = 0.0
+    llm_resolution_details: List[Dict[str, Any]] = field(default_factory=list)
 
     def as_dict(self) -> Dict[str, float | int]:
         return asdict(self)
@@ -280,6 +288,7 @@ def expected_match_relationships(ground_truth: pd.DataFrame) -> Set[MatchKey]:
 def calculate_evaluation_metrics(
     result: ReconciliationResult, *, ground_truth_path: Optional[Path] = None,
     elapsed_seconds: float = 0.0,
+    llm_resolution_result: Optional[Any] = None,
 ) -> EvaluationMetrics:
     actual = actual_match_relationships(result)
     stage_sets = _stage_match_relationships(result)
@@ -337,6 +346,36 @@ def calculate_evaluation_metrics(
             "coverage_contribution": round(stage_coverage, 2),
         }
 
+    llm_evaluated = 0
+    llm_resolved = 0
+    llm_incorrect = 0
+    llm_correct_exception = 0
+    llm_accuracy = 0.0
+    llm_details: List[Dict[str, Any]] = []
+
+    if llm_resolution_result is not None:
+        llm_evaluated = getattr(llm_resolution_result, "total_cases_evaluated", 0)
+        llm_resolved = getattr(llm_resolution_result, "llm_resolved_count", 0)
+        llm_incorrect = getattr(llm_resolution_result, "llm_incorrect_count", 0)
+        llm_correct_exception = getattr(llm_resolution_result, "llm_correct_exception_count", 0)
+        llm_accuracy = getattr(llm_resolution_result, "llm_resolution_accuracy", 0.0)
+        llm_details = getattr(llm_resolution_result, "details", [])
+
+    # Add LLM eval resolved count into the stage breakdown so the bar chart
+    # reflects transactions resolved by the LLM evaluation pass.
+    if llm_resolved > 0:
+        transaction_metrics["transaction_resolution_stage_breakdown"]["llm_resolved_transactions"] += llm_resolved
+        transaction_metrics["correctly_resolved_transactions"] += llm_resolved
+        transaction_metrics["review_transactions"] = max(0, transaction_metrics["transactions_requiring_review"] - llm_resolved)
+        transaction_metrics["needs_attention_transactions"] = (
+            transaction_metrics["transactions_requiring_review"] + transaction_metrics["unresolved_transactions"]
+        )
+        total = transaction_metrics["total_transactions"]
+        if total > 0:
+            transaction_metrics["transaction_resolution_accuracy"] = round(
+                transaction_metrics["correctly_resolved_transactions"] / total * 100.0, 2
+            )
+
     return EvaluationMetrics(
         total_transactions=transaction_metrics["total_transactions"],
         correctly_resolved_transactions=transaction_metrics["correctly_resolved_transactions"],
@@ -348,8 +387,6 @@ def calculate_evaluation_metrics(
         transaction_resolution_stage_breakdown=transaction_metrics["transaction_resolution_stage_breakdown"],
         precision=round(precision, 2),
         recall=round(recall, 2),
-        # In a link-prediction reconciliation task, accuracy is precision over
-        # resolved relationships; coverage is recall over ground truth links.
         accuracy=round(precision, 2),
         coverage=round(recall, 2),
         exception_rate=round(unresolved / total_records * 100, 2) if total_records else 0.0,
@@ -360,4 +397,10 @@ def calculate_evaluation_metrics(
         expected_match_relationships=len(expected),
         resolved_match_relationships=len(actual),
         identification_matrix=identification_matrix,
+        llm_cases_evaluated=llm_evaluated,
+        llm_resolved_transactions=llm_resolved,
+        llm_incorrect_resolutions=llm_incorrect,
+        llm_correct_exception_determinations=llm_correct_exception,
+        llm_resolution_accuracy=llm_accuracy,
+        llm_resolution_details=llm_details,
     )
