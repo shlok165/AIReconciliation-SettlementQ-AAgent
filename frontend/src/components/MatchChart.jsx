@@ -4,7 +4,6 @@ const STAGE_COLORS = {
   Deterministic: '#3b82f6',
   Fuzzy: '#8b5cf6',
   LLM: '#06b6d4',
-  Exception: '#10b981',
   Review: '#f59e0b',
   Unresolved: '#ef4444',
   Incorrect: '#dc2626',

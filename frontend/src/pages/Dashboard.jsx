@@ -12,7 +12,6 @@ export default function Dashboard({ metrics, unresolved, datasetStatus, datasetS
       { stage: 'Deterministic', count: metrics.evaluation.transaction_resolution_stage_breakdown?.deterministic_resolved_transactions || 0 },
       { stage: 'Fuzzy', count: metrics.evaluation.transaction_resolution_stage_breakdown?.fuzzy_resolved_transactions || 0 },
       { stage: 'LLM', count: metrics.evaluation.transaction_resolution_stage_breakdown?.llm_resolved_transactions || 0 },
-      { stage: 'Exception', count: metrics.evaluation.transaction_resolution_stage_breakdown?.exception_resolved_transactions || 0 },
       { stage: 'Review', count: metrics.evaluation.transaction_resolution_stage_breakdown?.review_transactions || 0 },
       { stage: 'Unresolved', count: metrics.evaluation.transaction_resolution_stage_breakdown?.unresolved_transactions || 0 },
       { stage: 'Incorrect', count: metrics.evaluation.transaction_resolution_stage_breakdown?.incorrect_transactions || 0 },

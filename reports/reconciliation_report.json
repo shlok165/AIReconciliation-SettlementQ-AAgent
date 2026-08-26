@@ -36,7 +36,7 @@
     "accuracy": 100.0,
     "coverage": 94.66,
     "exception_rate": 6.94,
-    "throughput_records_per_second": 796.94,
+    "throughput_records_per_second": 818.5,
     "true_positives": 390,
     "false_positives": 0,
     "false_negatives": 22,

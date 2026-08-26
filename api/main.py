@@ -28,6 +28,9 @@ app = FastAPI(title="AI Reconciliation & Settlement Q&A Agent")
 
 # Stores the latest LLM evaluation result after /reconcile runs.
 _latest_llm_eval: Dict[str, Any] = {}
+# Stores the full reconcile result + evaluation so /report can write post-LLM-eval report.
+_last_reconcile_result = None
+_last_reconcile_evaluation = None
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -75,9 +78,12 @@ class BaselineRun:
 
 def _invalidate_runtime_caches() -> None:
     """Clear cached views so endpoints reflect the latest dataset on disk."""
+    global _last_reconcile_result, _last_reconcile_evaluation
     _agent.cache_clear()
     _baseline_run.cache_clear()
     _latest_llm_eval.clear()
+    _last_reconcile_result = None
+    _last_reconcile_evaluation = None
 
 
 @lru_cache(maxsize=1)
@@ -125,6 +131,7 @@ def ask(request: AskRequest) -> AskResponse:
 @app.post("/reconcile", response_model=ReconcileResponse)
 def reconcile_with_tie_breaker() -> ReconcileResponse:
     """Run all passes including LLM evaluation of unmatched transactions."""
+    global _last_reconcile_result, _last_reconcile_evaluation
     _invalidate_runtime_caches()
     try:
         invoices, bank_transactions, payments = load_all_data()
@@ -138,6 +145,15 @@ def reconcile_with_tie_breaker() -> ReconcileResponse:
             llm_evaluation_client=client,
             ground_truth_path=str(gt_path) if gt_path.exists() else None,
         )
+        from time import perf_counter as _pc
+        _start = _pc()
+        evaluation = calculate_evaluation_metrics(
+            result,
+            ground_truth_path=gt_path,
+            elapsed_seconds=_pc() - _start,
+        )
+        _last_reconcile_result = result
+        _last_reconcile_evaluation = evaluation
     except (ValueError, LLMClientError) as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     llm_resolved = sum(
@@ -350,5 +366,7 @@ def generate_data(request: GenerateDataRequest) -> GenerateDataResponse:
 
 @app.post("/report")
 def report() -> Dict[str, str]:
+    if _last_reconcile_result is not None and _last_reconcile_evaluation is not None:
+        return generate_final_report(_last_reconcile_result, _last_reconcile_evaluation, output_dir=Path("reports"))
     run = _baseline_run()
     return generate_final_report(run.result, run.evaluation, output_dir=Path("reports"))

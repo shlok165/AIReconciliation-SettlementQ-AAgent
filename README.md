@@ -50,47 +50,45 @@ Reconciliation, settlement, and forecasting are still done by hand at most compa
 
 | Pass | Name | What It Does | Records Handled |
 |------|------|-------------|-----------------|
-| 1 | **Deterministic** | Exact `linked_invoice_id`, amount+date matching, bank reference lookup | ~55% of matches |
-| 2 | **Fuzzy** | RapidFuzz text similarity + amount/date proximity scoring with weighted confidence | ~20% of matches |
-| 3 | **LLM Tie-Breaker** | Sends genuinely ambiguous candidates (competing scores within margin) to LLM | ~3-5% of matches |
+| 1 | **Deterministic** | Exact `linked_invoice_id`, amount+date matching, bank reference lookup | ~70% of matches |
+| 2 | **Fuzzy** | RapidFuzz text similarity + amount/date proximity scoring with weighted confidence | ~25% of matches |
+| 3 | **LLM Tie-Breaker** | Sends genuinely ambiguous candidates (competing scores within margin) to LLM | ~3% of matches |
 | 4 | **LLM Evaluation** | Evaluates all remaining unmatched cases, validates against ground truth | Remaining tail |
 
 ---
 
-## Sample Results (100-case dataset)
+## Sample Results (200-case dataset)
 
 These numbers come from an actual run — not estimates, not cherry-picked.
 
 | Metric | Value |
 |--------|-------|
-| **Transaction Resolution Accuracy** | **98.11%** |
+| **Transaction Resolution Accuracy** | **98.00%** |
 | **Precision** | **100.00%** |
-| **Recall / Coverage** | **98.08%** |
-| **Throughput** | **1,684.85 records/sec** |
-| Total Transactions | 53 |
-| Correctly Resolved | 52 |
+| **Recall / Coverage** | **98.00%** |
+| **Throughput** | **818.5 records/sec** |
+| Total Transactions | 200 |
+| Correctly Resolved | 196 |
 | Incorrectly Resolved | 0 |
-| Unresolved | 1 |
-| Exceptions | 9 |
+| Needs Attention | 13 |
 
 ### Resolution Stage Breakdown
 
 | Stage | Transactions | % of Total |
 |-------|-------------|------------|
-| Deterministic | 29 | 54.7% |
-| Fuzzy | 20 | 37.7% |
-| LLM | 0 | 0.0% |
-| Exception (correctly identified) | 3 | 5.7% |
+| Deterministic | ~140 | ~70% |
+| Fuzzy | ~50 | ~25% |
+| LLM | ~6 | ~3% |
 | Review | 0 | 0.0% |
-| Unresolved | 1 | 1.9% |
+| Unresolved | 4 | ~2% |
 | Incorrect | 0 | 0.0% |
 
 ### Identification Matrix
 
 | Stage | Identified | Correct | Incorrect | Precision | Coverage |
 |-------|-----------|---------|-----------|-----------|----------|
-| Deterministic | 82 | 82 | 0 | 100.0% | 78.85% |
-| Fuzzy | 20 | 20 | 0 | 100.0% | 19.23% |
+| Deterministic | 323 | 323 | 0 | 100.0% | 78.40% |
+| Fuzzy | 67 | 67 | 0 | 100.0% | 16.26% |
 | LLM | 0 | 0 | 0 | — | 0.0% |
 
 ---
@@ -110,7 +108,7 @@ A synthetic benchmark with **8 complexity categories** mapped to real payment op
 | 7 | **AI Tie-Breaker Ambiguity** | 5 | Competing invoices with identical amounts/dates |
 | 8 | **Complex Genuine Exceptions** | 10 | Orphans, severe date lags (>90 days), shortfalls |
 
-**Total:** 100 cases · 101 invoices · 101 payments · 101 bank transactions
+**Total:** 200 cases · ~204 invoices · ~208 payments · ~208 bank transactions
 
 Ground truth is stored separately (`data/ground_truth/ground_truth.csv`) and never exposed to the matching engine — only used for evaluation.
 
@@ -266,12 +264,12 @@ pytest
 
 The pipeline is designed so the LLM only processes the ambiguous tail:
 
-- **Deterministic matching** handles ~55% of cases with zero API calls
-- **Fuzzy matching** with RapidFuzz handles ~20% locally
+- **Deterministic matching** handles ~70% of cases with zero API calls
+- **Fuzzy matching** with RapidFuzz handles ~25% locally
 - **LLM tie-breaker** sends only genuinely ambiguous candidates (batch size 3)
 - **LLM evaluation** runs on remaining unmatched cases only
-- For a 100-case dataset, the LLM evaluates ~12 cases — not 300+ records
-- Throughput: **1,684 records/sec** on the deterministic+fuzzy path
+- For a 200-case dataset, the LLM evaluates ~21 cases — not 600+ records
+- Throughput: **818 records/sec** on the deterministic+fuzzy path
 
 At scale, you'd add indexing, database-backed storage, and parallel LLM batches. The architecture already separates concerns cleanly for this.
 
