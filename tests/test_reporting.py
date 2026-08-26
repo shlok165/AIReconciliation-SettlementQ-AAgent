@@ -21,7 +21,18 @@ def test_metrics_and_report_export(tmp_path):
     pd.DataFrame([{"invoice_id": "INV-1", "payment_id": "PAY-1", "transaction_id": "TXN-1", "expected_result": "MATCH"}]).to_csv(ground_truth, index=False)
     evaluation = calculate_evaluation_metrics(result, ground_truth_path=ground_truth, elapsed_seconds=1.0)
     paths = generate_final_report(result, evaluation, output_dir=tmp_path / "reports")
+    assert evaluation.total_transactions == 1
+    assert evaluation.correctly_resolved_transactions == 1
+    assert evaluation.incorrectly_resolved_transactions == 0
+    assert evaluation.transaction_resolution_accuracy == 100.0
+    assert evaluation.transaction_resolution_stage_breakdown["deterministic_resolved_transactions"] == 1
     assert evaluation.precision == 100.0
     assert evaluation.coverage == 100.0
+    assert "deterministic" in evaluation.identification_matrix
+    assert "fuzzy" in evaluation.identification_matrix
+    assert "llm" in evaluation.identification_matrix
+    assert evaluation.identification_matrix["deterministic"]["identified_relationships"] == 2
+    assert evaluation.identification_matrix["deterministic"]["correct_relationships"] == 2
+    assert evaluation.identification_matrix["deterministic"]["precision"] == 100.0
     assert Path(paths["summary"]).exists()
     assert Path(paths["exceptions"]).exists()

@@ -1,102 +1,115 @@
 transaction_id,amount,date,description,reference_no
-TXN-0001,395.08,2026-07-09,"Standard invoice for Rodriguez, Figueroa and Sanchez",REF-INV-0001
-TXN-0002,2110.16,2026-08-05,"Standard invoice for Garcia, Yang and Gardner",REF-INV-0002
-TXN-0003,5944.48,2026-07-18,Standard invoice for Johnson and Sons,REF-INV-0003
-TXN-0004,878.12,2026-08-17,"Standard invoice for Guzman, Hoffman and Baldwin",REF-INV-0004
-TXN-0005,447.90,2026-06-26,Standard invoice for Robinson-Lawrence,REF-INV-0005
-TXN-0006,1905.38,2026-07-22,Standard invoice for Wolfe LLC,REF-INV-0006
-TXN-0007,4895.75,2026-07-05,Standard invoice for Lewis LLC,REF-INV-0007
-TXN-0008,5784.95,2026-07-29,Standard invoice for James LLC,REF-INV-0008
-TXN-0009,3472.25,2026-07-08,"Standard invoice for Baker, Williams and Stevens",REF-INV-0009
-TXN-0010,4796.27,2026-07-31,Standard invoice for Miller-Carter,REF-INV-0010
-TXN-0011,6118.70,2026-07-24,"Standard invoice for Lee, Jones and Stanley",REF-INV-0011
-TXN-0012,5645.49,2026-08-01,Standard invoice for Wyatt Inc,REF-INV-0012
-TXN-0013,2367.40,2026-07-11,Standard invoice for Chavez-Flowers,REF-INV-0013
-TXN-0014,7666.26,2026-07-02,Standard invoice for Kelly-Santiago,REF-INV-0014
-TXN-0015,997.24,2026-08-09,"Standard invoice for Reid, Ferguson and Sanchez",REF-INV-0015
-TXN-0016,954.39,2026-08-19,Standard invoice for Nelson-Schaefer,REF-INV-0016
-TXN-0017,4909.06,2026-07-18,Standard invoice for Cohen Inc,REF-INV-0017
-TXN-0018,5891.91,2026-07-21,Standard invoice for Trujillo Group,REF-INV-0018
-TXN-0019,1173.64,2026-07-26,Standard invoice for Clark PLC,REF-INV-0019
-TXN-0020,814.64,2026-08-09,Standard invoice for Rios Group,REF-INV-0020
-TXN-0021,6669.36,2026-08-19,Standard invoice for Baker and Sons,REF-INV-0021
-TXN-0022,4703.35,2026-08-03,"Standard invoice for Baker, Richards and Hurst",REF-INV-0022
-TXN-0023,557.43,2026-08-14,Standard invoice for Robinson-Bright,REF-INV-0023
-TXN-0024,6229.93,2026-07-06,Standard invoice for Davis-Williams,REF-INV-0024
-TXN-0025,6871.48,2026-08-05,Standard invoice for Burton Ltd,REF-INV-0025
-TXN-0026,3704.18,2026-07-31,Direct debit INV-0026 morph value-added methodologies,WIRE TFR: INV-0026 / BROWN JAMES AND FERRELL
-TXN-0027,3471.78,2026-08-12,INV-0027 / WILSON DYER AND POTTER,DEP WILSON DYER AND POTTER - INV-0027
-TXN-0028,5845.37,2026-08-10,INV-0028 / GRAHAM-CHAVEZ,WIRE TFR: INV-0028 / GRAHAM-CHAVEZ
-TXN-0029,4472.13,2026-08-17,INV-0029 / ROMERO INC,EDI PYMT ROMERO INC INV-0029
-TXN-0030,6551.14,2026-08-01,"Payment for INV-0030 - Lynch, Hernandez and Farmer",WIRE TFR: INV-0030 / LYNCH HERNANDEZ AND FARMER
-TXN-0031,7677.18,2026-07-23,Payment for INV-0031 - Burns-Rodriguez,WIRE TFR: INV-0031 / BURNS-RODRIGUEZ
-TXN-0032,2138.06,2026-07-09,INV-0032 / ALLEN PLC,SETTLE-INV-0032-505
-TXN-0033,2626.63,2026-08-01,Online transfer leverage back-end deliverables (Invoice INV-0033),EDI PYMT CANNON ANDERSON AND ALVAREZ INV-0033
-TXN-0034,7134.58,2026-08-10,ACH PMT HENDERSON LEWIS AND RYAN REF:INV-0034,SQ *HENDERSON LE REF:INV-0034
-TXN-0035,9475.00,2026-07-27,ACH PMT CARNEY-SANTOS REF:INV-0035,ACH CR 245051 CARNEY-SANTOS INV#0035
-TXN-0036,8201.31,2026-07-07,WALKER LLC / INV#0036 settlement,DEP WALKER LLC - INV-0036
-TXN-0037,5726.42,2026-08-05,Online transfer streamline bleeding-edge partnerships (Invoice INV-0037),SETTLE-INV-0037-490
-TXN-0038,2500.72,2026-07-30,Payment for INV-0038 - Heath Inc,DEP HEATH INC - INV-0038
-TXN-0039,6523.99,2026-08-17,Direct debit INV-0039 maximize collaborative action-items,DEP LEWIS-ANDERSON - INV-0039
-TXN-0040,1193.01,2026-07-10,ACH PMT AGUIRRE-LEE REF:INV-0040,ACH CR 555884 AGUIRRE-LEE INV#0040
-TXN-0041,9237.15,2026-07-08,Online transfer innovate mission-critical markets (Invoice INV-0041),ACH CR 898975 JENKINS-SHIELDS INV#0041
-TXN-0042,8019.61,2026-07-11,CHANDLER-MCBRIDE / INV#0042 settlement,WIRE TFR: INV-0042 / CHANDLER-MCBRIDE
-TXN-0043,7279.48,2026-07-18,Online transfer cultivate intuitive systems (Invoice INV-0043),ACH CR 665579 WEST HENDERSON AND RAMIREZ INV#0043
-TXN-0044,4718.46,2026-07-06,Direct debit INV-0044 evolve web-enabled communities,WIRE TFR: INV-0044 / GARCIA PEARSON AND FERNANDEZ
-TXN-0045,2402.15,2026-07-25,Payment for INV-0045 - Tucker-Lewis,DEP TUCKER-LEWIS - INV-0045
-TXN-0046,3346.59,2026-08-18,PAYMENT Smith-Myers Persevering exe,REF-IN-0046
-TXN-0047,5267.05,2026-08-14,"PAYMENT Bernard, Cowan and Peters Pre-emptive coh",REF-INV-0047
-TXN-0048,351.77,2026-08-15,PAYMENT Robinsonn-Brown Quality-focused,REF-INV-0048
-TXN-0049,5116.64,2026-08-04,PAYMENT Brown-Silva Progressive coh,REF-INV-O049
-TXN-0050,2850.94,2026-08-12,"PAYMENT Miller, Lopez and Larson Front-line impa",REF-INV-00S0
-TXN-0051,5543.14,2026-07-31,"PAYMENT Sanchez, Wheeler and Harvey Switchable opti",REF-INV-00S1
-TXN-0052,6596.30,2026-07-26,"PAYMENT Stewart, Green and Santiago Front-line empo",REF-INV-005Z
-TXN-0053,6410.61,2026-08-02,PAYMENT Powers LLC Intuitive web-e,REF-INV-0053
-TXN-0054,5315.46,2026-07-15,PAYMENT EEllis PLC Compatible nati,REF-INV-O0S4
-TXN-0055,4506.08,2026-07-22,"PAYMENT Baker, Mahoney and Ibarra Multi-layered e",REF-INV-0055
-TXN-0056,793.35,2026-08-09,PAYMENT Bass-Warner Streamlined mul,REF-INV-0056
-TXN-0057,4502.44,2026-07-17,"PAYMENT Montoya, Evas and Alvarado Fundamental bif",REF-INV-0057
-TXN-0058,6988.93,2026-08-14,"PAYMENT Tran, Nelsoon and Jacobs Mandatory deman",REF-INV-0O5B
-TXN-0059,6642.22,2026-07-13,"PAYMENT Farrell, Wagner and King Cross-group sca",REF-INV-0O59
-TXN-0060,4704.08,2026-07-17,PAYMENT Williams-Cook Sharable empowe,REF-INV-0060
-TXN-0061,581.12,2026-08-10,Merchant payout Arnold-Patterson (Net after fees),STRIPE-SETTLE-PAY-0061
-TXN-0062,10889.65,2026-07-06,Merchant payout Jones Ltd (Net after fees),STRIPE-SETTLE-PAY-0062
-TXN-0063,3488.24,2026-08-18,Merchant payout Gardner LLC (Net after fees),STRIPE-SETTLE-PAY-0063
-TXN-0064,3577.52,2026-08-03,"Merchant payout Hernandez, Anderson and Parker (Net after fees)",STRIPE-SETTLE-PAY-0064
-TXN-0065,2798.75,2026-08-18,Merchant payout Nolan and Sons (Net after fees),STRIPE-SETTLE-PAY-0065
-TXN-0066,6128.85,2026-08-08,Merchant payout Estrada LLC (Net after fees),STRIPE-SETTLE-PAY-0066
-TXN-0067,1515.85,2026-08-12,"Merchant payout Henson, Russell and Oliver (Net after fees)",STRIPE-SETTLE-PAY-0067
-TXN-0068,977.50,2026-07-13,Merchant payout Hancock and Sons (Net after fees),STRIPE-SETTLE-PAY-0068
-TXN-0069,7599.52,2026-08-17,Merchant payout Johnson-Doyle (Net after fees),STRIPE-SETTLE-PAY-0069
-TXN-0070,6645.53,2026-07-22,Merchant payout Pham-Shields (Net after fees),STRIPE-SETTLE-PAY-0070
-TXN-0071,1026.49,2026-08-14,ACH Credit - Adams Ltd,ACH-137778
-TXN-0072,5073.73,2026-07-13,ACH Credit - Brennan-Garrison,ACH-550664
-TXN-0073,1113.69,2026-07-16,ACH Credit - Velasquez Group,ACH-475190
-TXN-0074,1576.43,2026-07-22,ACH Credit - Hoover-Savage,ACH-470858
-TXN-0075,4768.65,2026-07-17,ACH Credit - Keller Group,ACH-348237
-TXN-0076,5241.79,2026-07-20,ACH Credit - Lin-Rasmussen,ACH-288073
-TXN-0077,4524.76,2026-07-19,ACH Credit - May-Ross,ACH-379766
-TXN-0078,1291.51,2026-08-15,"ACH Credit - Rivera, Johnson and Wiley",ACH-140605
-TXN-0079,5208.12,2026-07-16,ACH Credit - Carpenter LLC,ACH-466643
-TXN-0080,2109.07,2026-07-05,ACH Credit - Carlson LLC,ACH-792094
-TXN-0081,2611.15,2026-08-01,Installment 1/2 for INV-0081,INST-1-INV-0081
-TXN-0082,1740.76,2026-08-05,Installment 2/2 for INV-0081,INST-2-INV-0081
-TXN-0083,5430.28,2026-08-04,Installment 1/2 for INV-0082,INST-1-INV-0082
-TXN-0084,3620.19,2026-08-08,Installment 2/2 for INV-0082,INST-2-INV-0082
-TXN-0085,4494.22,2026-07-26,Installment 1/2 for INV-0083,INST-1-INV-0083
-TXN-0086,2996.15,2026-07-30,Installment 2/2 for INV-0083,INST-2-INV-0083
-TXN-0087,2659.03,2026-08-02,Installment 1/2 for INV-0084,INST-1-INV-0084
-TXN-0088,2659.02,2026-08-06,Installment 2/2 for INV-0084,INST-2-INV-0084
-TXN-0089,5483.56,2026-07-31,Installment 1/2 for INV-0085,INST-1-INV-0085
-TXN-0090,3655.71,2026-08-04,Installment 2/2 for INV-0085,INST-2-INV-0085
-TXN-0091,5564.13,2026-08-04,"Payment for Cloud Infrastructure Hosting (AWS Q3) - Martinez, Fisher and Bentley",TX-15014
-TXN-0092,2258.82,2026-07-29,"Payment for Custom Software Engineering Services - Carroll, Sullivan and Bass",TX-55309
-TXN-0093,6599.82,2026-08-04,Payment for Financial ERP Integration Consulting - Clark-Floyd,TX-67199
-TXN-0094,5743.46,2026-08-05,Payment for Monthly Dedicated Server Maintenance - Ramos-Lowe,TX-25157
-TXN-0095,4196.37,2026-08-14,Payment for Executive Leadership Coaching Program - Leon-Moyer,TX-43386
-TXN-0096,509.30,2026-07-21,"Unidentified direct credit deposit Schultz, Rogers and Cardenas",UNKNOWN-DEP-9821
-TXN-0097,5671.45,2026-11-07,Severely delayed settlement Hernandez Inc,DELAYED-PAY-472
-TXN-0098,2487.48,2026-07-07,Partial unauthorized deduction for INV-0098,SHORT-PMT-INV-0098
-TXN-0099,4458.65,2026-07-30,"Unidentified direct credit deposit Cruz, Ross and Hernandez",UNKNOWN-DEP-5920
-TXN-0100,4167.91,2026-11-05,Severely delayed settlement Robinson-Brock,DELAYED-PAY-512
-TXN-0101,4068.33,2026-07-29,Partial unauthorized deduction for INV-0101,SHORT-PMT-INV-0101
+TXN-0001,395.08,2026-07-10,"Standard invoice for Rodriguez, Figueroa and Sanchez",REF-INV-0001
+TXN-0002,2110.16,2026-08-06,"Standard invoice for Garcia, Yang and Gardner",REF-INV-0002
+TXN-0003,5944.48,2026-07-19,Standard invoice for Johnson and Sons,REF-INV-0003
+TXN-0004,878.12,2026-08-18,"Standard invoice for Guzman, Hoffman and Baldwin",REF-INV-0004
+TXN-0005,447.90,2026-06-27,Standard invoice for Robinson-Lawrence,REF-INV-0005
+TXN-0006,1905.38,2026-07-23,Standard invoice for Wolfe LLC,REF-INV-0006
+TXN-0007,4895.75,2026-07-06,Standard invoice for Lewis LLC,REF-INV-0007
+TXN-0008,5784.95,2026-07-30,Standard invoice for James LLC,REF-INV-0008
+TXN-0009,3472.25,2026-07-09,"Standard invoice for Baker, Williams and Stevens",REF-INV-0009
+TXN-0010,4796.27,2026-08-01,Standard invoice for Miller-Carter,REF-INV-0010
+TXN-0011,6118.70,2026-07-25,"Standard invoice for Lee, Jones and Stanley",REF-INV-0011
+TXN-0012,5645.49,2026-08-02,Standard invoice for Wyatt Inc,REF-INV-0012
+TXN-0013,2367.40,2026-07-12,Standard invoice for Chavez-Flowers,REF-INV-0013
+TXN-0014,7666.26,2026-07-03,Standard invoice for Kelly-Santiago,REF-INV-0014
+TXN-0015,997.24,2026-08-10,"Standard invoice for Reid, Ferguson and Sanchez",REF-INV-0015
+TXN-0016,954.39,2026-08-20,Standard invoice for Nelson-Schaefer,REF-INV-0016
+TXN-0017,4909.06,2026-07-19,Standard invoice for Cohen Inc,REF-INV-0017
+TXN-0018,5891.91,2026-07-22,Standard invoice for Trujillo Group,REF-INV-0018
+TXN-0019,1173.64,2026-07-27,Standard invoice for Clark PLC,REF-INV-0019
+TXN-0020,814.64,2026-08-10,Standard invoice for Rios Group,REF-INV-0020
+TXN-0021,6669.36,2026-08-20,Standard invoice for Baker and Sons,REF-INV-0021
+TXN-0022,4703.35,2026-08-04,"Standard invoice for Baker, Richards and Hurst",REF-INV-0022
+TXN-0023,557.43,2026-08-15,Standard invoice for Robinson-Bright,REF-INV-0023
+TXN-0024,6229.93,2026-07-07,Standard invoice for Davis-Williams,REF-INV-0024
+TXN-0025,6871.48,2026-08-06,Standard invoice for Burton Ltd,REF-INV-0025
+TXN-0026,3164.98,2026-08-17,"Standard invoice for Brown, James and Ferrell",REF-INV-0026
+TXN-0027,5158.34,2026-06-28,Standard invoice for Maddox-Valencia,REF-INV-0027
+TXN-0028,1468.70,2026-07-22,"Standard invoice for Le, Maldonado and Herrera",REF-INV-0028
+TXN-0029,1834.15,2026-06-27,"Standard invoice for Peterson, Carter and Moore",REF-INV-0029
+TXN-0030,5674.20,2026-07-14,"Standard invoice for Liu, Baker and Mason",REF-INV-0030
+TXN-0031,4951.22,2026-08-15,"Standard invoice for Gaines, Harrell and Evans",REF-INV-0031
+TXN-0032,4366.29,2026-08-17,"Standard invoice for Gonzalez, Brooks and Martin",REF-INV-0032
+TXN-0033,1474.54,2026-06-28,Standard invoice for George Group,REF-INV-0033
+TXN-0034,2305.59,2026-07-20,Standard invoice for Hickman LLC,REF-INV-0034
+TXN-0035,5539.99,2026-07-04,Standard invoice for Allen PLC,REF-INV-0035
+TXN-0036,1986.57,2026-08-17,Standard invoice for Dennis Inc,REF-INV-0036
+TXN-0037,6479.36,2026-08-19,Standard invoice for Anderson Group,REF-INV-0037
+TXN-0038,2288.38,2026-08-07,Standard invoice for Baker PLC,REF-INV-0038
+TXN-0039,8687.82,2026-08-09,INV-0039 / HICKMAN LTD,SQ *HICKMAN LTD REF:INV-0039
+TXN-0040,6278.35,2026-07-12,ACH PMT SANTOS KIM AND HOLMES REF:INV-0040,WIRE TFR: INV-0040 / SANTOS KIM AND HOLMES
+TXN-0041,1455.54,2026-08-04,Online transfer enhance clicks-and-mortar partnerships (Invoice INV-0041),SQ *SMITH-SPENCE REF:INV-0041
+TXN-0042,8544.64,2026-08-17,WELCH PEREZ AND WHITEHEAD / INV#0042 settlement,WIRE TFR: INV-0042 / WELCH PEREZ AND WHITEHEAD
+TXN-0043,4764.37,2026-07-17,Payment for INV-0043 - Ramirez Group,WIRE TFR: INV-0043 / RAMIREZ GROUP
+TXN-0044,7555.94,2026-07-16,"Payment for INV-0044 - Kennedy, Mueller and Aguirre",SETTLE-INV-0044-710
+TXN-0045,5721.56,2026-08-17,Direct debit INV-0045 drive scalable methodologies,EDI PYMT GOMEZ-JENKINS INV-0045
+TXN-0046,6510.65,2026-07-23,Online transfer exploit sticky action-items (Invoice INV-0046),SQ *JOYCE GARCIA REF:INV-0046
+TXN-0047,1193.01,2026-07-13,ACH PMT LEE GROUP REF:INV-0047,ACH CR 555884 LEE GROUP INV#0047
+TXN-0048,9237.15,2026-07-28,Online transfer exploit mission-critical markets (Invoice INV-0048),ACH CR 898975 WRIGHT-LEBLANC INV#0048
+TXN-0049,8019.61,2026-08-20,KIDD HUFF AND NOVAK / INV#0049 settlement,WIRE TFR: INV-0049 / KIDD HUFF AND NOVAK
+TXN-0050,7279.48,2026-07-26,Online transfer productize leading-edge communities (Invoice INV-0050),ACH CR 665579 TUCKER-LEWIS INV#0050
+TXN-0051,4718.46,2026-08-20,Direct debit INV-0051 generate ubiquitous technologies,WIRE TFR: INV-0051 / SMITH-MYERS
+TXN-0052,2402.15,2026-08-14,Payment for INV-0052 - Horton-Cross,DEP HORTON-CROSS - INV-0052
+TXN-0053,7779.82,2026-08-04,PHILLIPS INC / INV#0053 settlement,WIRE TFR: INV-0053 / PHILLIPS INC
+TXN-0054,9003.04,2026-07-31,Online transfer redefine granular markets (Invoice INV-0054),EDI PYMT WILLIAMS GROUP INV-0054
+TXN-0055,9166.79,2026-08-08,INV-0055 / MILLER LOPEZ AND LARSON,DEP MILLER LOPEZ AND LARSON - INV-0055
+TXN-0056,6816.07,2026-07-18,INV-0056 / DAVID PLC,SQ *DAVID PLC REF:INV-0056
+TXN-0057,8561.39,2026-08-03,BARNES PLC / INV#0057 settlement,WIRE TFR: INV-0057 / BARNES PLC
+TXN-0058,3311.10,2026-07-18,SANTIAGO LLC / INV#0058 settlement,EDI PYMT SANTIAGO LLC INV-0058
+TXN-0059,217.23,2026-07-10,"Payment for INV-0059 - Brewer, Bryant and Hickman",WIRE TFR: INV-0059 / BREWER BRYANT AND HICKMAN
+TXN-0060,8615.68,2026-07-19,Online transfer enable cross-media partnerships (Invoice INV-0060),WIRE TFR: INV-0060 / FERRELL JONES AND LEWIS
+TXN-0061,6113.98,2026-08-02,PAYMENT Wood and Sons Quality-focused,REF-INV-006I
+TXN-0062,3198.87,2026-08-13,"PAYMENT Riggs, Roman and Rice Reactive exudin",REF-1NV-0062
+TXN-0063,3630.92,2026-07-24,PAYMENT Mcmilla and Sons Customizable bi,REF-INV-O063
+TXN-0064,6410.61,2026-07-28,"PAYMENT Moore, Campbell and Clark Expanded system",REF-INV-0064
+TXN-0065,5315.46,2026-07-14,PAYMENT WWagner-King Cross-group sca,REF-INV-O065
+TXN-0066,4506.08,2026-07-18,PAYMENT Wil1iams-Cook Sharable empowe,REF-INV-0066
+TXN-0067,793.35,2026-07-17,"PAYMENT Ramos, Thornton and Hoffman Compatible syst",REF-INV-0067
+TXN-0068,4502.44,2026-08-01,"PAYMENT Johnson, Woo and Tran De-engineered 6",REF-INV-0068
+TXN-0069,3592.02,2026-07-13,PAYMENT Nolan-Flynn Multi-channeled,REF-INV-O069
+TXN-0070,6642.22,2026-08-18,PAYMENT Estrada LLC Realigned incre,REF-INV-0O70
+TXN-0071,4704.08,2026-08-19,"PAYMENT Moore, Spears and Hancock Enhanced increm",REF-INV-0071
+TXN-0072,1419.22,2026-08-18,PAYMENT Dole LLC Open-source sta,REF-INV-0072
+TXN-0073,6271.31,2026-07-17,PAYMENT Adams Ltd Multi-tiered 5t,REF-INV-0073
+TXN-0074,1105.49,2026-07-28,PAYMENT Gonzalez Group Integrated disc,REF-1NV-0074
+TXN-0075,6772.26,2026-07-27,PAYMENT Keller Group Grass-roots asy,REF-1NV-0O75
+TXN-0076,3225.92,2026-08-13,PAYMENT Bell-Hicks Public-key full,REF-INV-0076
+TXN-0077,10822.74,2026-07-12,Merchant payout White-Estes (Net after fees),STRIPE-SETTLE-PAY-0077
+TXN-0078,11550.47,2026-07-19,Merchant payout Rodriguez Group (Net after fees),STRIPE-SETTLE-PAY-0078
+TXN-0079,773.26,2026-07-23,"Merchant payout Hartman, Graham and Joyce (Net after fees)",STRIPE-SETTLE-PAY-0079
+TXN-0080,9221.71,2026-07-12,Merchant payout Lam-Lee (Net after fees),STRIPE-SETTLE-PAY-0080
+TXN-0081,3514.75,2026-07-09,"Merchant payout Graham, Meyer and Drake (Net after fees)",STRIPE-SETTLE-PAY-0081
+TXN-0082,4756.85,2026-08-09,"Merchant payout Bentley, Mclaughlin and Gonzalez (Net after fees)",STRIPE-SETTLE-PAY-0082
+TXN-0083,3012.12,2026-07-27,Merchant payout Rush LLC (Net after fees),STRIPE-SETTLE-PAY-0083
+TXN-0084,4453.25,2026-08-06,Merchant payout Alvarado-Martinez (Net after fees),STRIPE-SETTLE-PAY-0084
+TXN-0085,3017.67,2026-08-19,Merchant payout Hunter-Estrada (Net after fees),STRIPE-SETTLE-PAY-0085
+TXN-0086,4210.88,2026-07-22,Merchant payout Terry-Spencer (Net after fees),STRIPE-SETTLE-PAY-0086
+TXN-0087,4470.11,2026-07-16,Merchant payout Ortega-Gray (Net after fees),STRIPE-SETTLE-PAY-0087
+TXN-0088,2254.44,2026-08-10,ACH Credit - Gilbert LLC,ACH-287241
+TXN-0089,3651.30,2026-07-25,"ACH Credit - Bass, Torres and Clark",ACH-725550
+TXN-0090,2833.56,2026-08-15,"ACH Credit - Lawson, Morris and Ramos",ACH-735656
+TXN-0091,5911.72,2026-08-07,ACH Credit - Dixon Ltd,ACH-367095
+TXN-0092,648.56,2026-07-14,"ACH Credit - Miller, Robertson and Schultz",ACH-945687
+TXN-0093,3415.33,2026-07-25,ACH Credit - Cardenas and Sons,ACH-481913
+TXN-0094,2815.27,2026-08-09,ACH Credit - Walker-Gonzalez,ACH-795612
+TXN-0095,5148.89,2026-07-09,ACH Credit - Sanchez Group,ACH-424308
+TXN-0096,4134.60,2026-08-05,ACH Credit - Gibson Ltd,ACH-681343
+TXN-0097,1112.81,2026-08-04,ACH Credit - Higgins Group,ACH-810219
+TXN-0098,4589.55,2026-07-30,ACH Credit - Sanchez-Douglas,ACH-525800
+TXN-0099,3417.78,2026-07-18,Installment 1/2 for INV-0099,INST-1-INV-0099
+TXN-0100,3417.78,2026-07-22,Installment 2/2 for INV-0099,INST-2-INV-0099
+TXN-0101,3005.04,2026-07-26,Installment 1/2 for INV-0100,INST-1-INV-0100
+TXN-0102,2003.36,2026-07-30,Installment 2/2 for INV-0100,INST-2-INV-0100
+TXN-0103,3752.95,2026-07-23,Installment 1/2 for INV-0101,INST-1-INV-0101
+TXN-0104,2501.97,2026-07-27,Installment 2/2 for INV-0101,INST-2-INV-0101
+TXN-0105,4604.75,2026-08-02,Installment 1/2 for INV-0102,INST-1-INV-0102
+TXN-0106,1973.47,2026-08-06,Installment 2/2 for INV-0102,INST-2-INV-0102
+TXN-0107,4567.18,2026-08-11,Installment 1/2 for INV-0103,INST-1-INV-0103
+TXN-0108,3044.78,2026-08-15,Installment 2/2 for INV-0103,INST-2-INV-0103
+TXN-0109,5352.89,2026-07-25,Installment 1/2 for INV-0104,INST-1-INV-0104
+TXN-0110,2294.09,2026-07-29,Installment 2/2 for INV-0104,INST-2-INV-0104
+TXN-0111,2153.71,2026-08-04,"Payment for Cloud Infrastructure Hosting (AWS Q3) - Washington, Allen and Gonzales",TX-98184
+TXN-0112,3672.94,2026-08-04,Payment for Custom Software Engineering Services - Nelson LLC,TX-29313
+TXN-0113,1670.98,2026-07-25,Payment for Financial ERP Integration Consulting - Hernandez Group,TX-72277
+TXN-0114,3004.79,2026-07-17,Unidentified direct credit deposit Rivera-Owens,UNKNOWN-DEP-4185

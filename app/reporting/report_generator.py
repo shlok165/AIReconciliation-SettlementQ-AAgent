@@ -25,6 +25,24 @@ def generate_final_report(
     summary = {
         "totals": asdict(result.metrics),
         "evaluation": evaluation.as_dict(),
+        "transaction_level_primary": {
+            "total_transactions": evaluation.total_transactions,
+            "correctly_resolved_transactions": evaluation.correctly_resolved_transactions,
+            "transactions_requiring_review": evaluation.transactions_requiring_review,
+            "unresolved_transactions": evaluation.unresolved_transactions,
+            "incorrectly_resolved_transactions": evaluation.incorrectly_resolved_transactions,
+            "needs_attention_transactions": evaluation.needs_attention_transactions,
+            "transaction_resolution_accuracy": evaluation.transaction_resolution_accuracy,
+        },
+        "relationship_level_secondary": {
+            "precision": evaluation.precision,
+            "recall": evaluation.recall,
+            "accuracy": evaluation.accuracy,
+            "coverage": evaluation.coverage,
+            "expected_match_relationships": evaluation.expected_match_relationships,
+            "resolved_match_relationships": evaluation.resolved_match_relationships,
+            "identification_matrix": evaluation.identification_matrix,
+        },
         "resolution_stage_breakdown": {
             "deterministic_confirmed_matches": result.metrics.deterministic_confirmed_matches,
             "fuzzy_auto_matches": result.metrics.fuzzy_auto_matches,

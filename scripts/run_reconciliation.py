@@ -2,7 +2,6 @@
 
 import sys
 from pathlib import Path
-import pandas as pd
 
 # Ensure project root is in python path
 project_root = Path(__file__).resolve().parent.parent
@@ -10,6 +9,7 @@ sys.path.insert(0, str(project_root))
 
 from app.data.loader import load_all_data
 from app.engine.reconcile import reconcile
+from app.evaluation.metrics import calculate_evaluation_metrics
 
 
 def main():
@@ -66,87 +66,45 @@ def main():
         print(f"Ground truth file not found at {ground_truth_path}. Skipping evaluation breakdown.")
         return
 
-    gt_df = pd.read_csv(ground_truth_path)
-
-    # Extract actual resolved match relationships from engine output with composite keys
-    actual_matches = set()
-    
-    for m in getattr(result, "confirmed_invoice_payment_matches", []):
-        actual_matches.add(("INVOICE_PAYMENT", str(m.right_id), str(m.left_id)))
-    for m in getattr(result, "confirmed_payment_bank_matches", []):
-        actual_matches.add(("PAYMENT_BANK", str(m.left_id), str(m.right_id)))
-        
-    for am in getattr(result, "auto_matches", []):
-        c = am.candidate
-        if "PAYMENT_BANK" in c.match_type:
-            actual_matches.add(("PAYMENT_BANK", str(c.left_id), str(c.right_id)))
-        else:
-            actual_matches.add(("INVOICE_PAYMENT", str(c.right_id), str(c.left_id)))
-
-    # Parse ground truth expected relationships based on actual schema:
-    # ['case_id', 'invoice_id', 'transaction_id', 'payment_id', 'expected_result', 'exception_reason']
-    expected_matches = set()
-    expected_exceptions_count = 0
-    
-    for _, row in gt_df.iterrows():
-        status = str(row.get("expected_result", "")).strip().upper()
-        inv = str(row.get("invoice_id", "")).strip()
-        pay = str(row.get("payment_id", "")).strip()
-        txn = str(row.get("transaction_id", "")).strip()
-
-        if status == "MATCH":
-            if inv and pay and inv != "nan" and pay != "nan":
-                expected_matches.add(("INVOICE_PAYMENT", inv, pay))
-            if pay and txn and pay != "nan" and txn != "nan":
-                expected_matches.add(("PAYMENT_BANK", pay, txn))
-        else:
-            expected_exceptions_count += 1
-
-    # Calculate True Positives, False Positives, False Negatives
-    true_positives = len(actual_matches.intersection(expected_matches))
-    false_positives = len(actual_matches - expected_matches)
-    false_negatives = len(expected_matches - actual_matches)
-
-    precision = (true_positives / len(actual_matches) * 100.0) if len(actual_matches) > 0 else 0.0
-    recall = (true_positives / len(expected_matches) * 100.0) if len(expected_matches) > 0 else 0.0
-
-    # Exception evaluation metrics using actual unresolved IDs/exceptions against ground truth expectations
-    unresolved_ids = set(result.unresolved_invoice_ids + result.unresolved_payment_ids + result.unresolved_bank_transaction_ids)
-    
-    correctly_flagged = 0
-    incorrectly_flagged = 0
-    
-    for exc in result.exceptions:
-        if exc.record_id in unresolved_ids or exc.exception_type in ["NO_MATCH_FOUND", "MANUAL_REVIEW_REQUIRED", "CONFLICTING_AUTO_MATCH", "AMBIGUOUS_DETERMINISTIC_MATCH"]:
-            correctly_flagged += 1
-        else:
-            incorrectly_flagged += 1
-
-    fp_set = sorted(list(actual_matches - expected_matches))
-    fn_set = sorted(list(expected_matches - actual_matches))
+    evaluation = calculate_evaluation_metrics(
+        result,
+        ground_truth_path=ground_truth_path,
+        elapsed_seconds=0.0,
+    )
 
     print("=== GROUND TRUTH EVALUATION ===\n")
-    print(f"Expected match relationships: {len(expected_matches)}")
-    print(f"Actual resolved matches: {len(actual_matches)}")
-    print(f"True positives: {true_positives}")
-    print(f"False positives: {false_positives}")
-    print(f"False negatives: {false_negatives}")
-    print(f"Precision: {precision:.2f}%")
-    print(f"Recall: {recall:.2f}%\n")
-    print(f"Correctly flagged exceptions: {correctly_flagged}")
-    print(f"Incorrectly flagged exceptions: {incorrectly_flagged}\n")
+    print("-- Transaction-level (Primary) --")
+    print(f"Total transactions: {evaluation.total_transactions}")
+    print(f"Correctly resolved transactions: {evaluation.correctly_resolved_transactions}")
+    print(f"Transactions requiring review: {evaluation.transactions_requiring_review}")
+    print(f"Unresolved transactions: {evaluation.unresolved_transactions}")
+    print(f"Incorrectly resolved transactions: {evaluation.incorrectly_resolved_transactions}")
+    print(f"Needs attention transactions: {evaluation.needs_attention_transactions}")
+    print(f"Transaction resolution accuracy: {evaluation.transaction_resolution_accuracy:.2f}%\n")
 
-    if fp_set:
-        print("=== FALSE POSITIVE MATCHES ===")
-        for rel_type, left, right in fp_set:
-            print(f"- [{rel_type}] {left} <-> {right}")
-        print()
+    print("Transaction stage breakdown:")
+    for key, value in evaluation.transaction_resolution_stage_breakdown.items():
+        print(f"- {key}: {value}")
+    print()
 
-    if fn_set:
-        print("=== FALSE NEGATIVE MATCHES ===")
-        for rel_type, left, right in fn_set:
-            print(f"- [{rel_type}] {left} <-> {right}")
-        print()
+    print("-- Relationship-level (Secondary) --")
+    print(f"Expected match relationships: {evaluation.expected_match_relationships}")
+    print(f"Actual resolved relationships: {evaluation.resolved_match_relationships}")
+    print(f"True positives: {evaluation.true_positives}")
+    print(f"False positives: {evaluation.false_positives}")
+    print(f"False negatives: {evaluation.false_negatives}")
+    print(f"Precision: {evaluation.precision:.2f}%")
+    print(f"Recall: {evaluation.recall:.2f}%\n")
+
+    print("-- Stage identification matrix (Secondary) --")
+    for stage_name, stage_metrics in evaluation.identification_matrix.items():
+        print(
+            f"{stage_name}: identified={stage_metrics['identified_relationships']}, "
+            f"correct={stage_metrics['correct_relationships']}, "
+            f"incorrect={stage_metrics['incorrect_relationships']}, "
+            f"precision={stage_metrics['precision']}%, "
+            f"coverage_contribution={stage_metrics['coverage_contribution']}%"
+        )
 
 
 if __name__ == "__main__":

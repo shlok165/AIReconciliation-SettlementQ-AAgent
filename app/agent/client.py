@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any, Dict, List, Optional
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from app.config import PollinationsSettings
+
+logger = logging.getLogger(__name__)
 
 
 class LLMClientError(RuntimeError):
@@ -48,13 +51,22 @@ class PollinationsClient:
             },
             method="POST",
         )
+        logger.info(
+            "Sending LLM request: model=%s messages=%d tools=%d",
+            self.settings.model,
+            len(messages),
+            len(tools or []),
+        )
         try:
             with urlopen(request, timeout=self.settings.timeout_seconds) as response:
                 body = response.read().decode("utf-8")
+            logger.info("LLM request completed successfully")
         except HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
+            logger.warning("LLM request failed with HTTP %d: %s", exc.code, detail)
             raise LLMClientError(f"Pollinations returned HTTP {exc.code}: {detail}") from exc
         except URLError as exc:
+            logger.warning("LLM request could not reach Pollinations: %s", exc.reason)
             raise LLMClientError(f"Could not reach Pollinations: {exc.reason}") from exc
 
         try:

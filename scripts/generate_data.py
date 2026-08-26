@@ -15,7 +15,7 @@ incorporating real-world enterprise ledger challenges:
 import random
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from faker import Faker
 import pandas as pd
@@ -743,17 +743,23 @@ def generate_complex_exception_cases(fake: Faker, id_gen: IDGenerator, count: in
     return invoices, txns, payments, ground_truths
 
 
-def save_data(invoices, txns, payments, ground_truths):
+def save_data(invoices, txns, payments, ground_truths, *, output_dir: Path | str | None = None):
     """Write generated records to CSV files."""
+    target_dir = Path(output_dir) if output_dir else PROJECT_ROOT / "data"
+    raw_dir = target_dir / "raw"
+    gt_dir = target_dir / "ground_truth"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    gt_dir.mkdir(parents=True, exist_ok=True)
+
     df_inv = pd.DataFrame(invoices)
     df_txn = pd.DataFrame(txns)
     df_pay = pd.DataFrame(payments)
     df_gt = pd.DataFrame(ground_truths)
 
-    inv_path = DATA_RAW_DIR / "invoices.csv"
-    txn_path = DATA_RAW_DIR / "bank_transactions.csv"
-    pay_path = DATA_RAW_DIR / "payments.csv"
-    gt_path = DATA_GT_DIR / "ground_truth.csv"
+    inv_path = raw_dir / "invoices.csv"
+    txn_path = raw_dir / "bank_transactions.csv"
+    pay_path = raw_dir / "payments.csv"
+    gt_path = gt_dir / "ground_truth.csv"
 
     df_inv.to_csv(inv_path, index=False)
     df_txn.to_csv(txn_path, index=False)
@@ -763,22 +769,35 @@ def save_data(invoices, txns, payments, ground_truths):
     return len(df_inv), len(df_txn), len(df_pay), len(df_gt)
 
 
-def main():
-    init_environment(seed=42)
+def generate_dataset(size: int = 100, *, output_dir: Path | str | None = None, seed: int = 42) -> Dict[str, Any]:
+    """Generate a synthetic reconciliation dataset sized to the requested case count."""
+    target_size = max(10, int(size))
+    init_environment(seed=seed)
     fake = Faker()
     id_gen = IDGenerator()
 
     inv_all, txn_all, pay_all, gt_all = [], [], [], []
 
+    category_counts = {
+        "clean": max(8, round(target_size * 0.35)),
+        "unstructured": max(6, round(target_size * 0.20)),
+        "ocr": max(5, round(target_size * 0.15)),
+        "gateway": max(4, round(target_size * 0.10)),
+        "delay": max(4, round(target_size * 0.10)),
+        "partial": max(2, round(target_size * 0.05)),
+        "ai_tie": max(2, round(target_size * 0.03)),
+        "exception": max(3, round(target_size * 0.02)),
+    }
+
     generators = [
-        generate_clean_cases(fake, id_gen, count=25),
-        generate_unstructured_memo_cases(fake, id_gen, count=20),
-        generate_ocr_typo_cases(fake, id_gen, count=15),
-        generate_fee_and_fx_cases(fake, id_gen, count=10),
-        generate_banking_delay_cases(fake, id_gen, count=10),
-        generate_partial_payment_cases(fake, id_gen, count=5),
-        generate_ai_tie_breaker_cases(fake, id_gen, count=5),
-        generate_complex_exception_cases(fake, id_gen, count=10),
+        generate_clean_cases(fake, id_gen, count=category_counts["clean"]),
+        generate_unstructured_memo_cases(fake, id_gen, count=category_counts["unstructured"]),
+        generate_ocr_typo_cases(fake, id_gen, count=category_counts["ocr"]),
+        generate_fee_and_fx_cases(fake, id_gen, count=category_counts["gateway"]),
+        generate_banking_delay_cases(fake, id_gen, count=category_counts["delay"]),
+        generate_partial_payment_cases(fake, id_gen, count=category_counts["partial"]),
+        generate_ai_tie_breaker_cases(fake, id_gen, count=category_counts["ai_tie"]),
+        generate_complex_exception_cases(fake, id_gen, count=category_counts["exception"]),
     ]
 
     for inv, txn, pay, gt in generators:
@@ -788,15 +807,29 @@ def main():
         gt_all.extend(gt)
 
     count_inv, count_txn, count_pay, count_gt = save_data(
-        inv_all, txn_all, pay_all, gt_all
+        inv_all, txn_all, pay_all, gt_all, output_dir=output_dir
     )
 
+    return {
+        "size_requested": target_size,
+        "total_invoices": count_inv,
+        "total_payments": count_pay,
+        "total_bank_transactions": count_txn,
+        "total_ground_truth_cases": count_gt,
+        "total_records": count_inv + count_pay + count_txn,
+        "output_dir": str(Path(output_dir) if output_dir else PROJECT_ROOT / "data"),
+    }
+
+
+def main():
+    result = generate_dataset(size=100)
     print("=== EXTREME FINANCIAL RECONCILIATION DATASET GENERATED ===")
-    print(f"Total Underlying Cases : {count_gt}")
-    print(f"Total Invoices         : {count_inv}")
-    print(f"Total Payments         : {count_pay}")
-    print(f"Total Bank Transactions: {count_txn}")
-    print(f"Output Directory       : {PROJECT_ROOT / 'data'}")
+    print(f"Requested size         : {result['size_requested']}")
+    print(f"Total Ground Truth     : {result['total_ground_truth_cases']}")
+    print(f"Total Invoices         : {result['total_invoices']}")
+    print(f"Total Payments         : {result['total_payments']}")
+    print(f"Total Bank Transactions: {result['total_bank_transactions']}")
+    print(f"Output Directory       : {result['output_dir']}")
 
 
 if __name__ == "__main__":
