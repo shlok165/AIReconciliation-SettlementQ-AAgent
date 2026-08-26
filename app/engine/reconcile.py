@@ -5,7 +5,7 @@ relationship-aware conflict resolution, and safety guards into an end-to-end pip
 """
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Dict, List, Optional, Set
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set
 import pandas as pd
 
 from app.data.normalizer import (

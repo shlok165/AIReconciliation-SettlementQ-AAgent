@@ -1,61 +1,61 @@
 {
   "totals": {
-    "total_invoices": 53,
-    "total_payments": 53,
-    "total_bank_transactions": 53,
-    "deterministic_confirmed_matches": 82,
-    "fuzzy_auto_matches": 20,
-    "manual_review_candidates": 0,
-    "rejected_fuzzy_candidates": 2,
-    "unresolved_payments": 1,
-    "unresolved_bank_transactions": 3,
-    "unresolved_invoices": 3,
-    "payment_match_rate": 98.11,
-    "bank_transaction_match_rate": 94.34,
-    "invoice_match_rate": 94.34
+    "total_invoices": 307,
+    "total_payments": 312,
+    "total_bank_transactions": 312,
+    "deterministic_confirmed_matches": 488,
+    "fuzzy_auto_matches": 98,
+    "manual_review_candidates": 19,
+    "rejected_fuzzy_candidates": 6,
+    "unresolved_payments": 19,
+    "unresolved_bank_transactions": 19,
+    "unresolved_invoices": 29,
+    "payment_match_rate": 93.91,
+    "bank_transaction_match_rate": 93.91,
+    "invoice_match_rate": 90.55
   },
   "evaluation": {
-    "total_transactions": 53,
-    "correctly_resolved_transactions": 52,
-    "transactions_requiring_review": 0,
-    "unresolved_transactions": 1,
+    "total_transactions": 300,
+    "correctly_resolved_transactions": 281,
+    "transactions_requiring_review": 19,
+    "unresolved_transactions": 0,
     "incorrectly_resolved_transactions": 0,
-    "needs_attention_transactions": 1,
-    "transaction_resolution_accuracy": 98.11,
+    "needs_attention_transactions": 19,
+    "transaction_resolution_accuracy": 93.67,
     "transaction_resolution_stage_breakdown": {
-      "deterministic_resolved_transactions": 29,
-      "fuzzy_resolved_transactions": 20,
+      "deterministic_resolved_transactions": 180,
+      "fuzzy_resolved_transactions": 95,
       "llm_resolved_transactions": 0,
-      "exception_resolved_transactions": 3,
-      "review_transactions": 0,
-      "unresolved_transactions": 1,
+      "exception_resolved_transactions": 6,
+      "review_transactions": 19,
+      "unresolved_transactions": 0,
       "incorrect_transactions": 0
     },
     "precision": 100.0,
-    "recall": 98.08,
+    "recall": 94.82,
     "accuracy": 100.0,
-    "coverage": 98.08,
-    "exception_rate": 4.4,
-    "throughput_records_per_second": 264997982.17,
-    "true_positives": 102,
+    "coverage": 94.82,
+    "exception_rate": 7.2,
+    "throughput_records_per_second": 1034436567.73,
+    "true_positives": 586,
     "false_positives": 0,
-    "false_negatives": 2,
-    "expected_match_relationships": 104,
-    "resolved_match_relationships": 102,
+    "false_negatives": 32,
+    "expected_match_relationships": 618,
+    "resolved_match_relationships": 586,
     "identification_matrix": {
       "deterministic": {
-        "identified_relationships": 82,
-        "correct_relationships": 82,
+        "identified_relationships": 488,
+        "correct_relationships": 488,
         "incorrect_relationships": 0,
         "precision": 100.0,
-        "coverage_contribution": 78.85
+        "coverage_contribution": 78.96
       },
       "fuzzy": {
-        "identified_relationships": 20,
-        "correct_relationships": 20,
+        "identified_relationships": 98,
+        "correct_relationships": 98,
         "incorrect_relationships": 0,
         "precision": 100.0,
-        "coverage_contribution": 19.23
+        "coverage_contribution": 15.86
       },
       "llm": {
         "identified_relationships": 0,
@@ -73,35 +73,35 @@
     "llm_resolution_details": []
   },
   "transaction_level_primary": {
-    "total_transactions": 53,
-    "correctly_resolved_transactions": 52,
-    "transactions_requiring_review": 0,
-    "unresolved_transactions": 1,
+    "total_transactions": 300,
+    "correctly_resolved_transactions": 281,
+    "transactions_requiring_review": 19,
+    "unresolved_transactions": 0,
     "incorrectly_resolved_transactions": 0,
-    "needs_attention_transactions": 1,
-    "transaction_resolution_accuracy": 98.11
+    "needs_attention_transactions": 19,
+    "transaction_resolution_accuracy": 93.67
   },
   "relationship_level_secondary": {
     "precision": 100.0,
-    "recall": 98.08,
+    "recall": 94.82,
     "accuracy": 100.0,
-    "coverage": 98.08,
-    "expected_match_relationships": 104,
-    "resolved_match_relationships": 102,
+    "coverage": 94.82,
+    "expected_match_relationships": 618,
+    "resolved_match_relationships": 586,
     "identification_matrix": {
       "deterministic": {
-        "identified_relationships": 82,
-        "correct_relationships": 82,
+        "identified_relationships": 488,
+        "correct_relationships": 488,
         "incorrect_relationships": 0,
         "precision": 100.0,
-        "coverage_contribution": 78.85
+        "coverage_contribution": 78.96
       },
       "fuzzy": {
-        "identified_relationships": 20,
-        "correct_relationships": 20,
+        "identified_relationships": 98,
+        "correct_relationships": 98,
         "incorrect_relationships": 0,
         "precision": 100.0,
-        "coverage_contribution": 19.23
+        "coverage_contribution": 15.86
       },
       "llm": {
         "identified_relationships": 0,
@@ -113,11 +113,11 @@
     }
   },
   "resolution_stage_breakdown": {
-    "deterministic_confirmed_matches": 82,
-    "fuzzy_auto_matches": 20,
-    "manual_review_candidates": 0,
-    "rejected_fuzzy_candidates": 2
+    "deterministic_confirmed_matches": 488,
+    "fuzzy_auto_matches": 98,
+    "manual_review_candidates": 19,
+    "rejected_fuzzy_candidates": 6
   },
-  "exception_count": 9,
+  "exception_count": 49,
   "exception_report": "reports\\exceptions.csv"
 }
