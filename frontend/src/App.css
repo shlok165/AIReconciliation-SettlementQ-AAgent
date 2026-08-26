@@ -247,6 +247,16 @@ h2 {
 
 .metric-card.green { border-top-color: #10b981; }
 .metric-card.orange { border-top-color: #f59e0b; }
+
+.metric-card.clickable {
+  cursor: pointer;
+}
+
+.metric-card.clickable:hover {
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.15);
+  transform: translateY(-2px);
+  border-color: #f59e0b;
+}
 .metric-card.purple { border-top-color: #8b5cf6; }
 
 .metric-label {
@@ -406,6 +416,26 @@ code {
   text-transform: capitalize;
   background: #eff6ff;
   color: #2563eb;
+}
+
+.attention-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.attention-badge.review {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.attention-badge.unresolved {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 /* ---------- Text Utilities ---------- */

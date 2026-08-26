@@ -5,7 +5,6 @@ const STAGE_COLORS = {
   Fuzzy: '#8b5cf6',
   LLM: '#06b6d4',
   Review: '#f59e0b',
-  Unresolved: '#ef4444',
   Incorrect: '#dc2626',
 }
 

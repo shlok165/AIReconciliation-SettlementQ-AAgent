@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { LoaderCircle } from 'lucide-react'
 import MetricCard from '../components/MetricCard'
 import MatchChart from '../components/MatchChart'
@@ -7,29 +7,43 @@ const pct = (value) => `${Number(value || 0).toFixed(2)}%`
 const num = (value) => Number(value || 0)
 
 export default function Dashboard({ metrics, unresolved, datasetStatus, datasetSize, setDatasetSize, working, onGenerate }) {
+  const attentionRef = useRef(null)
+
   const stages = useMemo(
     () => metrics ? [
       { stage: 'Deterministic', count: metrics.evaluation.transaction_resolution_stage_breakdown?.deterministic_resolved_transactions || 0 },
       { stage: 'Fuzzy', count: metrics.evaluation.transaction_resolution_stage_breakdown?.fuzzy_resolved_transactions || 0 },
       { stage: 'LLM', count: metrics.evaluation.transaction_resolution_stage_breakdown?.llm_resolved_transactions || 0 },
       { stage: 'Review', count: metrics.evaluation.transaction_resolution_stage_breakdown?.review_transactions || 0 },
-      { stage: 'Unresolved', count: metrics.evaluation.transaction_resolution_stage_breakdown?.unresolved_transactions || 0 },
       { stage: 'Incorrect', count: metrics.evaluation.transaction_resolution_stage_breakdown?.incorrect_transactions || 0 },
     ] : [],
     [metrics],
   )
 
-  const reviewCases = useMemo(() => {
+  const attentionCases = useMemo(() => {
     if (!unresolved) return []
-    return unresolved.llm_cases.filter(c => {
-      if (c.exception_type !== 'MANUAL_REVIEW_REQUIRED') return false
+    const cases = []
+    for (const c of unresolved.llm_cases) {
       const llm = c.llm_decision
-      if (!llm) return true
-      if (llm.llm_resolution === 'MATCH' && llm.llm_confidence >= 90) return false
-      if (llm.llm_resolution === 'EXCEPTION' && llm.llm_confidence >= 90) return false
-      return true
-    })
+      if (c.exception_type === 'MANUAL_REVIEW_REQUIRED') {
+        let needsReview = true
+        if (llm) {
+          if (llm.llm_resolution === 'MATCH' && llm.llm_confidence >= 90) needsReview = false
+          if (llm.llm_resolution === 'EXCEPTION' && llm.llm_confidence >= 90) needsReview = false
+        }
+        if (needsReview) cases.push({ ...c, _status: 'Review' })
+      } else if (c.exception_type === 'NO_MATCH_FOUND') {
+        cases.push({ ...c, _status: 'Unresolved' })
+      }
+    }
+    return cases
   }, [unresolved])
+
+  const attentionCount = attentionCases.length || num(metrics.evaluation.needs_attention_transactions)
+
+  const scrollToAttention = () => {
+    attentionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   if (!metrics) {
     return <div className="empty-panel">Unable to load dataset metrics.</div>
@@ -51,9 +65,10 @@ export default function Dashboard({ metrics, unresolved, datasetStatus, datasetS
         />
         <MetricCard
           label="Needs attention"
-          value={num(metrics.evaluation.needs_attention_transactions).toLocaleString()}
-          note="review + unresolved transactions"
+          value={attentionCount.toLocaleString()}
+          note="review + unresolved transactions — click to view"
           tone="orange"
+          onClick={scrollToAttention}
         />
         <MetricCard
           label="False resolutions"
@@ -151,16 +166,17 @@ export default function Dashboard({ metrics, unresolved, datasetStatus, datasetS
         </div>
       )}
 
-      {reviewCases.length > 0 && (
-        <div className="panel">
+      {attentionCases.length > 0 && (
+        <div className="panel" ref={attentionRef} id="needs-attention">
           <div className="panel-head">
-            <h2>Cases needing review ({reviewCases.length})</h2>
-            <p>Transactions flagged by the engine that require human validation</p>
+            <h2>Needs attention ({attentionCases.length})</h2>
+            <p>Review cases and unresolved transactions requiring human validation</p>
           </div>
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
+                  <th>Status</th>
                   <th>Case</th>
                   <th>Primary</th>
                   <th>Related Records</th>
@@ -172,10 +188,11 @@ export default function Dashboard({ metrics, unresolved, datasetStatus, datasetS
                 </tr>
               </thead>
               <tbody>
-                {reviewCases.map((c) => {
+                {attentionCases.map((c) => {
                   const llm = c.llm_decision
                   return (
                     <tr key={c.case_id}>
+                      <td><span className={`attention-badge ${c._status.toLowerCase()}`}>{c._status}</span></td>
                       <td><code>{c.case_id}</code></td>
                       <td><code>{c.record_id}</code> <small>({c.record_type})</small></td>
                       <td>{c.related_ids.length ? c.related_ids.map(id => <code key={id} className="inline-id">{id}</code>) : <span className="muted">none</span>}</td>

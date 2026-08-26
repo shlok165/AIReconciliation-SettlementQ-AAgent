@@ -17,179 +17,38 @@ INV-0015,997.24,PAID,2026-08-10,CUST-6514,"Standard invoice for Reid, Ferguson a
 INV-0016,954.39,PAID,2026-08-20,CUST-7224,Standard invoice for Nelson-Schaefer
 INV-0017,4909.06,PAID,2026-07-19,CUST-6635,Standard invoice for Cohen Inc
 INV-0018,5891.91,PAID,2026-07-22,CUST-1711,Standard invoice for Trujillo Group
-INV-0019,1173.64,PAID,2026-07-27,CUST-9785,Standard invoice for Clark PLC
-INV-0020,814.64,PAID,2026-08-10,CUST-7201,Standard invoice for Rios Group
-INV-0021,6669.36,PAID,2026-08-20,CUST-5803,Standard invoice for Baker and Sons
-INV-0022,4703.35,PAID,2026-08-04,CUST-6925,"Standard invoice for Baker, Richards and Hurst"
-INV-0023,557.43,PAID,2026-08-15,CUST-2139,Standard invoice for Robinson-Bright
-INV-0024,6229.93,PAID,2026-07-07,CUST-4733,Standard invoice for Davis-Williams
-INV-0025,6871.48,PAID,2026-08-06,CUST-2307,Standard invoice for Burton Ltd
-INV-0026,3164.98,PAID,2026-08-17,CUST-2654,"Standard invoice for Brown, James and Ferrell"
-INV-0027,5158.34,PAID,2026-06-28,CUST-8428,Standard invoice for Maddox-Valencia
-INV-0028,1468.70,PAID,2026-07-22,CUST-6977,"Standard invoice for Le, Maldonado and Herrera"
-INV-0029,1834.15,PAID,2026-06-27,CUST-6820,"Standard invoice for Peterson, Carter and Moore"
-INV-0030,5674.20,PAID,2026-07-14,CUST-5374,"Standard invoice for Liu, Baker and Mason"
-INV-0031,4951.22,PAID,2026-08-15,CUST-2169,"Standard invoice for Gaines, Harrell and Evans"
-INV-0032,4366.29,PAID,2026-08-17,CUST-3803,"Standard invoice for Gonzalez, Brooks and Martin"
-INV-0033,1474.54,PAID,2026-06-28,CUST-5010,Standard invoice for George Group
-INV-0034,2305.59,PAID,2026-07-20,CUST-7216,Standard invoice for Hickman LLC
-INV-0035,5539.99,PAID,2026-07-04,CUST-4598,Standard invoice for Allen PLC
-INV-0036,1986.57,PAID,2026-08-17,CUST-1916,Standard invoice for Dennis Inc
-INV-0037,6479.36,PAID,2026-08-19,CUST-1525,Standard invoice for Anderson Group
-INV-0038,2288.38,PAID,2026-08-07,CUST-7572,Standard invoice for Baker PLC
-INV-0039,7322.46,PAID,2026-07-16,CUST-4456,Standard invoice for Hickman Ltd
-INV-0040,1858.49,PAID,2026-08-08,CUST-6155,"Standard invoice for Collins, Carney and Santos"
-INV-0041,3285.93,PAID,2026-06-29,CUST-9179,"Standard invoice for Hayes, Wright and Brown"
-INV-0042,1314.40,PAID,2026-07-02,CUST-8517,"Standard invoice for Spencer, Chapman and Smith"
-INV-0043,2123.69,PAID,2026-07-29,CUST-3287,Standard invoice for Jones Inc
-INV-0044,2249.38,PAID,2026-08-13,CUST-9830,Standard invoice for Palmer LLC
-INV-0045,7203.02,PAID,2026-08-11,CUST-8019,Standard invoice for Ryan Ltd
-INV-0046,3023.57,PAID,2026-07-15,CUST-7543,Standard invoice for Mueller Group
-INV-0047,4174.31,PAID,2026-07-31,CUST-3266,Standard invoice for Davis Group
-INV-0048,6095.10,PAID,2026-07-02,CUST-2489,Standard invoice for Jenkins-Shields
-INV-0049,1392.16,PAID,2026-07-29,CUST-2796,"Standard invoice for Valdez, Lucas and Brown"
-INV-0050,6378.22,PAID,2026-08-18,CUST-3621,Standard invoice for Wright and Sons
-INV-0051,4851.99,PAID,2026-08-10,CUST-7916,Standard invoice for Taylor-White
-INV-0052,3176.63,PAID,2026-08-09,CUST-7304,Standard invoice for Baxter Inc
-INV-0053,4327.09,PAID,2026-06-28,CUST-8668,"Standard invoice for Garcia, Pearson and Fernandez"
-INV-0054,5506.21,PAID,2026-07-13,CUST-1188,Standard invoice for House and Sons
-INV-0055,5517.34,PAID,2026-08-04,CUST-2876,Standard invoice for Tucker-Lewis
-INV-0056,6056.85,PAID,2026-08-03,CUST-9797,Standard invoice for Martin Inc
-INV-0057,1070.11,PAID,2026-07-24,CUST-6573,Standard invoice for House-Glover
-INV-0058,1433.63,PAID,2026-08-19,CUST-8123,Standard invoice for Horton-Cross
-INV-0059,7639.76,PAID,2026-07-02,CUST-1053,"Standard invoice for Higgins, Moore and Phillips"
-INV-0060,7780.73,PAID,2026-07-01,CUST-5315,"Standard invoice for Fitzgerald, Brown and Edwards"
-INV-0061,4159.92,PAID,2026-07-02,CUST-3927,"Standard invoice for Woods, Calhoun and Schmidt"
-INV-0062,6990.04,PAID,2026-07-19,CUST-2743,"Standard invoice for Miller, Lopez and Larson"
-INV-0063,6765.02,PAID,2026-07-20,CUST-5889,Standard invoice for Wilson-Zamora
-INV-0064,4949.97,PAID,2026-08-20,CUST-9317,"Standard invoice for Wheeler, Harvey and Barnes"
-INV-0065,3116.53,PAID,2026-07-27,CUST-3504,"Standard invoice for Stewart, Green and Santiago"
-INV-0066,4407.16,PAID,2026-07-26,CUST-3646,Standard invoice for Baker and Sons
-INV-0067,8737.91,PAID,2026-07-10,CUST-9689,implement ubiquitous e-business for Stewart-Walton
-INV-0068,8837.07,PAID,2026-07-19,CUST-2832,"enable cross-media partnerships for Ferrell, Jones and Lewis"
-INV-0069,2402.15,PAID,2026-07-28,CUST-1949,e-enable seamless e-business for Wood and Sons
-INV-0070,7779.82,PAID,2026-08-08,CUST-8962,"transform global portals for Rice, Contreras and Spencer"
-INV-0071,9003.04,PAID,2026-08-02,CUST-8787,orchestrate real-time technologies for Preston Ltd
-INV-0072,9166.79,PAID,2026-08-17,CUST-7932,"morph holistic portals for Clark, Cooper and Watts"
-INV-0073,6816.07,PAID,2026-08-16,CUST-4295,empower revolutionary synergies for Davis Group
-INV-0074,8561.39,PAID,2026-07-19,CUST-8177,leverage visionary schemas for Wise-Walsh
-INV-0075,3311.10,PAID,2026-08-18,CUST-2049,"scale B2C users for Patterson, Smith and Jones"
-INV-0076,217.23,PAID,2026-08-02,CUST-4608,orchestrate user-centric channels for Davenport PLC
-INV-0077,8615.68,PAID,2026-08-19,CUST-2104,seize best-of-breed methodologies for Parker Inc
-INV-0078,6404.94,PAID,2026-08-13,CUST-5562,engage transparent e-business for Estrada LLC
-INV-0079,2422.02,PAID,2026-08-14,CUST-8744,"exploit virtual e-markets for Moore, Spears and Hancock"
-INV-0080,1056.30,PAID,2026-08-13,CUST-2545,re-contextualize transparent web services for White LLC
-INV-0081,8226.87,PAID,2026-07-12,CUST-8651,"synergize robust info-mediaries for Cochran, Adams and Cobb"
-INV-0082,716.73,PAID,2026-07-23,CUST-2612,monetize bleeding-edge e-services for Gonzalez Group
-INV-0083,1928.45,PAID,2026-07-22,CUST-4139,empower innovative niches for Keller Group
-INV-0084,4475.57,PAID,2026-08-16,CUST-5563,incubate open-source web-readiness for May-Ross
-INV-0085,6247.55,PAID,2026-07-15,CUST-1828,benchmark back-end paradigms for Wiley LLC
-INV-0086,1705.01,PAID,2026-08-11,CUST-4872,generate turn-key e-commerce for Carlson LLC
-INV-0087,1689.36,PAID,2026-07-16,CUST-1960,"morph revolutionary e-commerce for Joyce, Wilson and Lam"
-INV-0088,4105.12,PAID,2026-08-09,CUST-5673,drive 24/365 relationships for Meyer PLC
-INV-0089,1597.35,PAID,2026-07-23,CUST-8973,re-intermediate turn-key web services for Jones-Beck
-INV-0090,719.95,PAID,2026-07-31,CUST-9883,monetize transparent vortals for Cortez LLC
-INV-0091,4851.65,PAID,2026-07-16,CUST-8811,deploy enterprise methodologies for Terry-Spencer
-INV-0092,899.04,PAID,2026-08-02,CUST-9320,"e-enable clicks-and-mortar content for Orr, Gilbert and Turner"
-INV-0093,3925.30,PAID,2026-08-05,CUST-4853,visualize world-class bandwidth for Clark-Floyd
-INV-0094,5941.22,PAID,2026-07-29,CUST-1651,generate frictionless web services for Ramos-Lewis
-INV-0095,3108.06,PAID,2026-08-06,CUST-9565,re-intermediate open-source infrastructures for Campbell Ltd
-INV-0096,2381.71,PAID,2026-08-15,CUST-6147,aggregate B2B web-readiness for Chambers and Sons
-INV-0097,4425.05,PAID,2026-08-05,CUST-5915,iterate intuitive bandwidth for Sanchez Group
-INV-0098,834.99,PAID,2026-08-10,CUST-2638,scale integrated models for Mercado-Johnston
-INV-0099,8386.08,PAID,2026-07-07,CUST-6718,productize sticky e-commerce for Sanchez-Douglas
-INV-0100,7945.52,PAID,2026-08-01,CUST-8179,target scalable schemas for Thompson Ltd
-INV-0101,223.15,PAID,2026-07-29,CUST-9666,enable plug-and-play web services for Lowery Inc
-INV-0102,8929.00,PAID,2026-08-19,CUST-2697,"grow cutting-edge schemas for Travis, Larson and Dodson"
-INV-0103,2696.46,PAID,2026-07-30,CUST-3546,grow back-end action-items for Merritt-Manning
-INV-0104,6578.10,PAID,2026-07-18,CUST-4335,"empower visionary partnerships for Ramirez, Strickland and Washington"
-INV-0105,617.42,PAID,2026-08-07,CUST-6464,"Configurable client-driven collaboration - Mitchell, Nelson and Flores"
-INV-0106,5275.34,PAID,2026-08-15,CUST-3442,Extended asymmetric instruction set - Reyes and Sons
-INV-0107,6772.26,PAID,2026-07-15,CUST-4441,Expanded intangible info-mediaries - Rivera-Owens
-INV-0108,6665.77,PAID,2026-08-08,CUST-7658,"Multi-tiered mission-critical ability - Shah, Smith and Gilmore"
-INV-0109,6965.50,PAID,2026-08-21,CUST-4878,Operative national synergy - Evans-Price
-INV-0110,1446.22,PAID,2026-07-22,CUST-2771,"Future-proofed intermediate matrix - Payne, Morrison and Walker"
-INV-0111,470.38,PAID,2026-08-13,CUST-4164,Open-architected uniform concept - Price Ltd
-INV-0112,1130.46,PAID,2026-08-06,CUST-5279,Assimilated hybrid parallelism - Calhoun-Hooper
-INV-0113,4451.43,PAID,2026-08-03,CUST-5173,"Enterprise-wide actuating firmware - Alvarado, Miller and Patterson"
-INV-0114,5642.04,PAID,2026-07-28,CUST-4228,Virtual homogeneous focus group - Murphy-Gibson
-INV-0115,3951.28,PAID,2026-07-12,CUST-7691,User-friendly needs-based application - King-Miller
-INV-0116,3223.74,PAID,2026-08-12,CUST-1006,Balanced web-enabled algorithm - Walker-Jones
-INV-0117,3483.55,PAID,2026-08-11,CUST-4501,Distributed disintermediate capacity - Gonzalez Inc
-INV-0118,5144.13,PAID,2026-07-22,CUST-4680,Persistent tangible extranet - Caldwell-Elliott
-INV-0119,3283.98,PAID,2026-08-17,CUST-4185,Universal bifurcated time-frame - Jackson-Lawson
-INV-0120,1875.66,PAID,2026-08-09,CUST-9486,Assimilated fault-tolerant orchestration - Oconnell Inc
-INV-0121,5106.56,PAID,2026-07-21,CUST-6198,"Compatible optimizing solution - Odonnell, Brooks and David"
-INV-0122,4711.10,PAID,2026-08-14,CUST-9270,"Right-sized bottom-line utilization - Sanchez, Terry and Turner"
-INV-0123,6347.01,PAID,2026-07-29,CUST-5543,"Cloned motivating project - Patton, Reed and Patterson"
-INV-0124,1400.20,PAID,2026-08-04,CUST-4505,Customer-focused intermediate hierarchy - Smith-Fisher
-INV-0125,6468.47,PAID,2026-07-20,CUST-7232,"Upgradable multi-state projection - Snow, Stevens and Hernandez"
-INV-0126,6059.05,PAID,2026-08-18,CUST-4613,Polarized maximized Internet solution - Gilbert-Gillespie
-INV-0127,4145.69,PAID,2026-07-16,CUST-7455,"Grass-roots local encryption - Vargas, Morris and Sanchez"
-INV-0128,3573.84,PAID,2026-07-28,CUST-6529,Assimilated modular Graphic Interface - Hudson-Barnett
-INV-0129,1914.40,PAID,2026-08-19,CUST-2124,Fundamental global focus group - Freeman LLC
-INV-0130,1123.60,PAID,2026-07-21,CUST-4571,"Configurable disintermediate success - Haynes, Hill and Smith"
-INV-0131,1124.64,PAID,2026-08-14,CUST-3683,Phased secondary structure - Freeman-Chang
-INV-0132,4445.74,PAID,2026-07-26,CUST-7149,Face-to-face impactful solution - West-Smith
-INV-0133,5061.53,PAID,2026-07-18,CUST-2245,Invoice for Beck-Wood
-INV-0134,7309.13,PAID,2026-08-02,CUST-4978,"Invoice for Cooper, Barajas and Pierce"
-INV-0135,1671.87,PAID,2026-07-24,CUST-2983,"Invoice for Chavez, Parker and Hall"
-INV-0136,9656.61,PAID,2026-08-11,CUST-1672,Invoice for Stewart Ltd
-INV-0137,4492.84,PAID,2026-08-02,CUST-7071,"Invoice for Lopez, Robinson and Washington"
-INV-0138,1293.00,PAID,2026-08-11,CUST-1207,"Invoice for Bray, Warren and Campbell"
-INV-0139,10270.12,PAID,2026-07-11,CUST-2729,Invoice for Phillips LLC
-INV-0140,5485.52,PAID,2026-07-15,CUST-8532,Invoice for Smith-Ferguson
-INV-0141,8634.05,PAID,2026-07-20,CUST-9548,Invoice for Mccann PLC
-INV-0142,11602.95,PAID,2026-07-21,CUST-9817,"Invoice for Raymond, Little and Mullins"
-INV-0143,9408.38,PAID,2026-07-11,CUST-5397,Invoice for Andrews Group
-INV-0144,4206.50,PAID,2026-07-30,CUST-2419,Invoice for Peterson-Sheppard
-INV-0145,3707.67,PAID,2026-07-19,CUST-8613,Invoice for Wilson-Jones
-INV-0146,7053.27,PAID,2026-07-30,CUST-6511,Invoice for Ray Ltd
-INV-0147,830.05,PAID,2026-07-09,CUST-3979,Invoice for Hernandez PLC
-INV-0148,6106.82,PAID,2026-07-21,CUST-5232,Invoice for Mcknight Inc
-INV-0149,4413.90,PAID,2026-08-03,CUST-5526,Invoice for Obrien-Gibbs
-INV-0150,6891.60,PAID,2026-07-17,CUST-4130,"Invoice for James, Kerr and Evans"
-INV-0151,1484.55,PAID,2026-08-04,CUST-9004,Invoice for Torres-Oliver
-INV-0152,3508.99,PAID,2026-07-31,CUST-8800,"Enterprise services for Garcia, Farmer and Garrett"
-INV-0153,4386.32,PAID,2026-07-14,CUST-2524,"Enterprise services for Miller, Allen and Arnold"
-INV-0154,1640.94,PAID,2026-07-09,CUST-6016,Enterprise services for Ortiz Ltd
-INV-0155,3656.71,PAID,2026-07-30,CUST-9698,Enterprise services for Carter-Hall
-INV-0156,2782.82,PAID,2026-08-05,CUST-6419,Enterprise services for Warner-Gibson
-INV-0157,4335.99,PAID,2026-08-04,CUST-5118,Enterprise services for Bradshaw Ltd
-INV-0158,1075.67,PAID,2026-07-30,CUST-2958,"Enterprise services for Lara, Gonzalez and Wilson"
-INV-0159,3400.84,PAID,2026-07-12,CUST-4138,"Enterprise services for Hernandez, Baker and Thomas"
-INV-0160,4536.19,PAID,2026-07-04,CUST-9595,Enterprise services for Sparks PLC
-INV-0161,1984.79,PAID,2026-08-07,CUST-5853,"Enterprise services for Morse, Gonzales and Harrison"
-INV-0162,2420.93,PAID,2026-07-16,CUST-9751,"Enterprise services for Powell, Nelson and Fernandez"
-INV-0163,1936.14,PAID,2026-07-23,CUST-5786,Enterprise services for George Group
-INV-0164,5686.90,PAID,2026-08-06,CUST-2680,Enterprise services for Munoz-Johnson
-INV-0165,3614.76,PAID,2026-07-13,CUST-8216,"Enterprise services for Huff, Johnston and Sampson"
-INV-0166,1432.44,PAID,2026-08-08,CUST-8827,"Enterprise services for Underwood, Johnston and Hines"
-INV-0167,5003.85,PAID,2026-07-10,CUST-2213,Enterprise services for Stone-Ramos
-INV-0168,3924.90,PAID,2026-07-15,CUST-3444,Enterprise services for Shea Group
-INV-0169,3551.90,PAID,2026-08-01,CUST-5066,Enterprise services for Costa-Harrison
-INV-0170,3525.21,PAID,2026-07-21,CUST-4697,Enterprise services for Morris-Garcia
-INV-0171,6658.01,PAID,2026-07-24,CUST-8253,Multi-installment project milestone for Jenkins-Simpson
-INV-0172,5081.47,PAID,2026-08-05,CUST-8025,"Multi-installment project milestone for Johnson, Miller and King"
-INV-0173,5137.66,PAID,2026-07-22,CUST-1986,Multi-installment project milestone for Hancock-Bryan
-INV-0174,7267.42,PAID,2026-07-17,CUST-2625,"Multi-installment project milestone for Booth, Murray and Brown"
-INV-0175,9633.13,PAID,2026-08-03,CUST-4457,"Multi-installment project milestone for Avila, Garrett and Wolf"
-INV-0176,4852.52,PAID,2026-07-26,CUST-3573,Multi-installment project milestone for Dunn-Pennington
-INV-0177,4679.06,PAID,2026-08-07,CUST-2229,"Multi-installment project milestone for Washington, Johnson and Mccoy"
-INV-0178,4095.73,PAID,2026-07-28,CUST-8381,"Multi-installment project milestone for Moore, Pierce and Tran"
-INV-0179,7825.60,PAID,2026-07-21,CUST-5771,Multi-installment project milestone for Gay Inc
-INV-0180,3228.48,PAID,2026-08-08,CUST-5632,Multi-installment project milestone for Holland and Sons
-INV-0181,6420.91,PAID,2026-08-15,CUST-8438,Cloud Infrastructure Hosting (AWS Q3)
-INV-0182,6420.91,OPEN,2026-08-15,CUST-8438,Cybersecurity Penetration Testing & Audit
-INV-0183,6311.69,PAID,2026-08-14,CUST-5334,Custom Software Engineering Services
-INV-0184,6311.69,OPEN,2026-08-14,CUST-5334,Database High-Availability Optimization
-INV-0185,5628.53,PAID,2026-08-09,CUST-4241,Financial ERP Integration Consulting
-INV-0186,5628.53,OPEN,2026-08-09,CUST-4241,Corporate Payroll System Migration
-INV-0187,2303.43,PAID,2026-07-28,CUST-4683,Monthly Dedicated Server Maintenance
-INV-0188,2303.43,OPEN,2026-07-28,CUST-4683,Disaster Recovery Standby Site Hosting
-INV-0189,2542.93,PAID,2026-08-07,CUST-5352,Executive Leadership Coaching Program
-INV-0190,2542.93,OPEN,2026-08-07,CUST-5352,Annual Corporate Compliance Training
-INV-0191,1999.87,PAID,2026-08-14,CUST-3718,Cloud Infrastructure Hosting (AWS Q3)
-INV-0192,1999.87,OPEN,2026-08-14,CUST-3718,Cybersecurity Penetration Testing & Audit
-INV-0193,3772.74,UNPAID,2026-07-13,CUST-5728,Unpaid abandoned order Arnold-Daniels
-INV-0194,4348.54,OVERDUE,2026-07-12,CUST-5460,"Contract services with 90+ day delay for Kennedy, Mcintyre and James"
+INV-0019,1317.12,PAID,2026-08-18,CUST-9785,unleash turn-key e-tailers for Clark PLC
+INV-0020,5548.24,PAID,2026-07-13,CUST-6925,"morph global action-items for Porter, Wilkerson and Day"
+INV-0021,7378.19,PAID,2026-08-19,CUST-4733,"benchmark wireless relationships for Hoffman, Baker and Richards"
+INV-0022,2749.05,PAID,2026-07-31,CUST-7227,synthesize e-business markets for Osborn and Sons
+INV-0023,3471.78,PAID,2026-08-14,CUST-7065,innovate cutting-edge metrics for Hernandez and Sons
+INV-0024,5845.37,PAID,2026-07-29,CUST-2169,mesh dot-com schemas for Cruz PLC
+INV-0025,4472.13,PAID,2026-08-09,CUST-3677,matrix real-time experiences for Frazier Inc
+INV-0026,6551.14,PAID,2026-07-29,CUST-4598,implement back-end mindshare for Rodriguez-Graham
+INV-0027,7677.18,PAID,2026-08-18,CUST-1525,whiteboard seamless functionalities for Romero Inc
+INV-0028,2138.06,PAID,2026-08-02,CUST-6155,"revolutionize clicks-and-mortar metrics for Lynch, Hernandez and Farmer"
+INV-0029,1879.11,PAID,2026-07-29,CUST-3266,Integrated disintermediate approach - Burns-Rodriguez
+INV-0030,4594.15,PAID,2026-07-16,CUST-7304,Upgradable mobile architecture - Humphrey Inc
+INV-0031,382.66,PAID,2026-08-07,CUST-2876,"Down-sized empowering moderator - Cannon, Anderson and Alvarez"
+INV-0032,2448.80,PAID,2026-08-16,CUST-9317,"Team-oriented dedicated structure - Henderson, Lewis and Ryan"
+INV-0033,3817.96,PAID,2026-07-30,CUST-2832,Organic multi-state knowledge user - Ross-Powers
+INV-0034,6287.99,PAID,2026-07-28,CUST-6038,Ameliorated optimizing neural-net - Wright Inc
+INV-0035,4258.59,PAID,2026-07-15,CUST-5342,Triple-buffered responsive approach - Chapman Inc
+INV-0036,1171.23,PAID,2026-07-28,CUST-4681,Compatible multimedia encoding - Jones Inc
+INV-0037,1236.30,PAID,2026-07-20,CUST-4770,"Invoice for Washington, Ryan and Cummings"
+INV-0038,7267.06,PAID,2026-08-18,CUST-1964,"Invoice for Johnston, Sanchez and Kennedy"
+INV-0039,3132.83,PAID,2026-07-26,CUST-6413,Invoice for Davis Ltd
+INV-0040,1314.86,PAID,2026-07-27,CUST-8953,Invoice for Henderson-Owens
+INV-0041,2963.72,PAID,2026-08-11,CUST-8744,Invoice for Nunez Ltd
+INV-0042,1760.78,PAID,2026-07-06,CUST-4119,Enterprise services for Powell LLC
+INV-0043,942.81,PAID,2026-08-09,CUST-7939,Enterprise services for Wright and Sons
+INV-0044,3015.34,PAID,2026-07-28,CUST-2612,Enterprise services for Taylor-White
+INV-0045,2654.68,PAID,2026-07-24,CUST-5073,Enterprise services for Baxter Inc
+INV-0046,1465.17,PAID,2026-07-23,CUST-7912,"Enterprise services for Garcia, Pearson and Fernandez"
+INV-0047,4949.82,PAID,2026-07-17,CUST-2235,Multi-installment project milestone for House and Sons
+INV-0048,6101.92,PAID,2026-07-25,CUST-2604,Multi-installment project milestone for Tucker-Lewis
+INV-0049,1854.12,PAID,2026-08-10,CUST-9856,Cloud Infrastructure Hosting (AWS Q3)
+INV-0050,1854.12,OPEN,2026-08-10,CUST-9856,Cybersecurity Penetration Testing & Audit
+INV-0051,8282.97,PAID,2026-08-09,CUST-4872,Custom Software Engineering Services
+INV-0052,8282.97,OPEN,2026-08-09,CUST-4872,Database High-Availability Optimization
+INV-0053,2735.28,UNPAID,2026-07-10,CUST-8886,Unpaid abandoned order Horton-Cross
