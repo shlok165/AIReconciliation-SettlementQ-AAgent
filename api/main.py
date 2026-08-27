@@ -7,7 +7,6 @@ from pathlib import Path
 from time import perf_counter
 from typing import Any, Dict, List
 
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -23,7 +22,6 @@ from scripts.generate_data import generate_dataset
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
 app = FastAPI(title="AI Reconciliation & Settlement Q&A Agent")
 
 # Stores the latest LLM evaluation result after /reconcile runs.

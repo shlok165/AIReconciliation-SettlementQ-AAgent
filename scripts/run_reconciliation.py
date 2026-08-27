@@ -17,7 +17,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run reconciliation and evaluation.")
     parser.add_argument(
         "--llm-eval", action="store_true",
-        help="Enable LLM evaluation of unmatched transactions (requires POLLINATIONS_API_KEY).",
+        help="Enable LLM evaluation of unmatched transactions.",
     )
     parser.add_argument(
         "--llm-min-confidence", type=float, default=70.0,
@@ -38,12 +38,6 @@ def main():
     ground_truth_path = project_root / "data" / "ground_truth" / "ground_truth.csv"
 
     if args.llm_eval:
-        try:
-            from dotenv import load_dotenv
-            load_dotenv(project_root / ".env")
-        except ImportError:
-            pass
-
         try:
             from app.agent.client import PollinationsClient
             llm_eval_client = PollinationsClient()

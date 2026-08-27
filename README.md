@@ -169,7 +169,6 @@ Transactions are grouped by ground-truth case (e.g., PAY-0045 + INV-0045 + TXN-0
 
 - Python 3.10+
 - Node.js 18+
-- A Pollinations API key (get one at [pollinations.ai](https://pollinations.ai))
 
 ### Backend
 
@@ -184,11 +183,6 @@ python -m venv .venv
 
 # Install dependencies
 pip install -r requirements.txt
-
-# Configure your API key
-copy .env.example .env        # Windows
-# cp .env.example .env        # macOS/Linux
-# Edit .env and add your POLLINATIONS_API_KEY
 
 # Run the backend
 uvicorn api.main:app --reload --port 8000
